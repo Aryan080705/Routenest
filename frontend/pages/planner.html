@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Route Planner | RouteNest</title>
+    <script>
+      try {
+        const saved = JSON.parse(localStorage.getItem("routenest-state") || "{}");
+        const theme = saved.theme === "dark" ? "dark" : "light";
+        document.documentElement.classList.toggle("dark", theme === "dark");
+        document.documentElement.dataset.theme = theme;
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body data-page-name="navPlanner">
+    <header class="site-header">
+      <a class="brand" href="../index.html"><span class="brand-mark">RN</span><span>RouteNest</span></a>
+      <nav><a href="../index.html" data-i18n="navHome">Navigation</a><a href="community.html" data-i18n="navCommunity">Community</a><a href="planner.html" data-i18n="navPlanner">Planner</a><a href="notifications.html" data-i18n="navNotifications">Notifications</a><a href="reviews.html" data-i18n="navReviews">Reviews</a></nav>
+      <div class="header-actions"><select id="languageSelect"><option value="en">English</option><option value="hi">Hindi</option><option value="es">Spanish</option></select><button id="themeToggle" class="ghost-button" type="button">Dark mode</button></div>
+    </header>
+    <main>
+      <section id="planner" class="section route-band">
+        <div class="section-heading"><p class="eyebrow" data-i18n="plannerEyebrow">Route planner</p><h2 data-i18n="plannerTitle">Compare routes with live traffic style updates</h2><p data-i18n="plannerBody">Add waypoints, compare distance and time, save frequent routes, and refresh conditions while planning.</p></div>
+        <div class="planner-dashboard">
+          <article><span class="dashboard-number" id="routeOptionCount">0</span><p data-i18n="routeOptions">Route options</p></article>
+          <article><span class="dashboard-number" id="bestTimeStat">0</span><p data-i18n="bestTime">Best time</p></article>
+          <article><span class="dashboard-number" id="lowestTrafficStat">Low</span><p data-i18n="lowestTraffic">Lowest traffic</p></article>
+          <article><span class="dashboard-number" id="savedPlannerCount">0</span><p data-i18n="savedRoutes">Saved routes</p></article>
+        </div>
+        <div class="planner-shell">
+          <form id="routeForm" class="panel">
+            <h3 data-i18n="planJourney">Plan your journey</h3>
+            <label><span data-i18n="startLocation">Start location</span><input id="startInput" required value="Mumbai" /></label>
+            <label><span data-i18n="destination">Destination</span><input id="destinationInput" required value="Pune" /></label>
+            <label><span data-i18n="waypoints">Waypoints</span><input id="waypointInput" placeholder="Lonavala, Khandala" /></label>
+            <div class="button-row"><button type="submit" data-i18n="suggestRoutes">Suggest routes</button><button id="refreshTraffic" class="ghost-button" type="button" data-i18n="refreshTraffic">Refresh traffic</button></div>
+            <p id="trafficUpdateMessage" class="form-message" role="status"></p>
+          </form>
+          <div class="map-panel">
+            <div class="map-photo">
+              <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1000&q=80" alt="Map and travel planning" />
+              <div class="map-grid-overlay"></div>
+              <div class="route-line route-line-a"></div>
+              <div class="route-line route-line-b"></div>
+              <div class="route-line route-line-c"></div>
+              <span class="pin pin-start">A</span>
+              <span class="pin pin-waypoint">W</span>
+              <span class="pin pin-end">B</span>
+              <div id="mapMeta" class="map-meta"></div>
+            </div>
+          </div>
+        </div>
+        <div class="planner-section-heading">
+          <div><p class="eyebrow" data-i18n="compareRoutes">Compare routes</p><h3 data-i18n="suggestedRoutes">Suggested routes</h3></div>
+          <p id="alternativeHint" class="muted-copy"></p>
+        </div>
+        <div id="routesGrid" class="card-grid"></div>
+        <div class="saved-routes-panel">
+          <div><p class="eyebrow" data-i18n="frequentRoutes">Frequent routes</p><h3 data-i18n="savedRouteList">Saved route list</h3></div>
+          <div id="savedRoutesList" class="stack-list"></div>
+        </div>
+      </section>
+    </main>
+    <script src="../script.js"></script>
+  </body>
+</html>

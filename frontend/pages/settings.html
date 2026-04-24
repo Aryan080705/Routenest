@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings | RouteNest</title>
+    <script>
+      try {
+        const saved = JSON.parse(localStorage.getItem("routenest-state") || "{}");
+        const theme = saved.theme === "dark" ? "dark" : "light";
+        document.documentElement.classList.toggle("dark", theme === "dark");
+        document.documentElement.dataset.theme = theme;
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body data-page-name="navCardSettings">
+    <header class="site-header">
+      <a class="brand" href="../index.html"><span class="brand-mark">RN</span><span>RouteNest</span></a>
+      <nav><a href="../index.html" data-i18n="navHome">Navigation</a><a href="community.html" data-i18n="navCommunity">Community</a><a href="planner.html" data-i18n="navPlanner">Planner</a><a href="notifications.html" data-i18n="navNotifications">Notifications</a><a href="reviews.html" data-i18n="navReviews">Reviews</a></nav>
+      <div class="header-actions"><select id="languageSelect"><option value="en">English</option><option value="hi">Hindi</option><option value="es">Spanish</option></select><button id="themeToggle" class="ghost-button" type="button">Dark mode</button></div>
+    </header>
+    <main>
+      <section class="section settings-page">
+        <div class="section-heading">
+          <p class="eyebrow" data-i18n="settingsEyebrow">Settings</p>
+          <h2 data-i18n="settingsTitle">Language and theme preferences</h2>
+          <p data-i18n="settingsBody">Choose your preferred language, switch theme instantly, and keep your preferences saved across pages.</p>
+        </div>
+        <div class="settings-layout">
+          <div class="panel language-panel">
+            <div>
+              <p class="eyebrow" data-i18n="languageCenter">Language center</p>
+              <h3 data-i18n="chooseLanguage">Choose display language</h3>
+              <p class="muted-copy" data-i18n="languageHelp">The whole interface updates instantly. Missing translations fall back to English.</p>
+            </div>
+            <div class="language-cards" role="list" aria-label="Language options">
+              <button class="language-card" type="button" data-set-language="en">
+                <span>EN</span>
+                <strong>English</strong>
+                <small>Default fallback</small>
+              </button>
+              <button class="language-card" type="button" data-set-language="hi">
+                <span>हि</span>
+                <strong>हिन्दी</strong>
+                <small>Hindi interface</small>
+              </button>
+              <button class="language-card" type="button" data-set-language="es">
+                <span>ES</span>
+                <strong>Español</strong>
+                <small>Spanish interface</small>
+              </button>
+            </div>
+            <div class="preference-status">
+              <span data-i18n="currentLanguage">Current language</span>
+              <strong id="currentLanguageLabel">English</strong>
+            </div>
+          </div>
+          <div class="panel theme-panel">
+            <p class="eyebrow" data-i18n="themePreview">Theme preview</p>
+            <h3 data-i18n="instantTheme">Instant theme switching</h3>
+            <p class="muted-copy" data-i18n="themeHelp">Use the navbar button to preview light or dark mode without reloading.</p>
+            <div class="theme-cards" role="list" aria-label="Theme options">
+              <button class="theme-card light-card" type="button" data-set-theme="light">
+                <span class="theme-swatch"></span>
+                <strong data-i18n="lightTheme">Light theme</strong>
+                <small data-i18n="lightThemeHelp">Warm daylight interface</small>
+              </button>
+              <button class="theme-card dark-card" type="button" data-set-theme="dark">
+                <span class="theme-swatch"></span>
+                <strong data-i18n="darkTheme">Dark theme</strong>
+                <small data-i18n="darkThemeHelp">Low-light travel dashboard</small>
+              </button>
+            </div>
+            <div class="theme-preview-card">
+              <span class="pill">RouteNest</span>
+              <h3 data-i18n="sampleJourney">Sample journey card</h3>
+              <p data-i18n="sampleJourneyBody">Your selected language and theme stay active while moving between pages.</p>
+            </div>
+            <div class="preference-status">
+              <span data-i18n="savedPreference">Saved preference</span>
+              <strong id="savedPreferenceLabel">Local storage</strong>
+            </div>
+            <div class="preference-status">
+              <span data-i18n="fallbackTheme">Fallback theme</span>
+              <strong id="fallbackThemeLabel" data-i18n="lightTheme">Light theme</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="../script.js"></script>
+  </body>
+</html>

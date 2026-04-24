@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="RouteNest bus travel community platform" />
+    <title>RouteNest</title>
+    <script>
+      try {
+        const saved = JSON.parse(localStorage.getItem("routenest-state") || "{}");
+        const theme = saved.theme === "dark" ? "dark" : "light";
+        document.documentElement.classList.toggle("dark", theme === "dark");
+        document.documentElement.dataset.theme = theme;
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="navigation-home" data-page-name="navHome">
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="RouteNest home">
+        <span class="brand-mark">RN</span>
+        <span>RouteNest</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="#navigation" data-i18n="navExplore">Explore</a>
+        <a href="pages/community.html" data-i18n="navCommunity">Community</a>
+        <a href="pages/planner.html" data-i18n="navPlanner">Planner</a>
+        <a href="pages/notifications.html" data-i18n="navNotifications">Notifications</a>
+        <a href="pages/reviews.html" data-i18n="navReviews">Reviews</a>
+      </nav>
+      <div class="header-actions">
+        <select id="languageSelect" aria-label="Language selector">
+          <option value="en">English</option>
+          <option value="hi">Hindi</option>
+          <option value="es">Spanish</option>
+        </select>
+        <button id="themeToggle" class="ghost-button" type="button" data-i18n="darkMode">Dark mode</button>
+      </div>
+    </header>
+
+    <main id="home">
+      <section class="intro">
+        <div class="intro-copy">
+          <p class="travel-badge" data-i18n="homeBadge">Join 50,000+ travelers</p>
+          <h1 data-i18n="homeTitle">Journey Together, Share Stories</h1>
+          <p data-i18n="homeBody">Connect with fellow travelers, discover scenic bus routes, and share unforgettable journey experiences across India.</p>
+          <form class="hero-search">
+            <label><span data-i18n="from">From</span><input type="text" value="Delhi" aria-label="From city"></label>
+            <label><span data-i18n="to">To</span><input type="text" value="Mumbai" aria-label="To city"></label>
+            <a class="search-route-button" href="pages/planner.html" data-i18n="searchRoutes">Search Routes</a>
+          </form>
+          <div class="quick-stats hero-stats" aria-label="Platform highlights">
+            <span><strong>2,500+</strong> <span data-i18n="routesLabel">Routes</span></span>
+            <span><strong>15k+</strong> <span data-i18n="storiesLabel">Stories</span></span>
+            <span><strong>4.8</strong> <span data-i18n="ratingLabel">Rating</span></span>
+          </div>
+          <div class="hero-actions">
+            <a class="primary-link" href="pages/planner.html" data-i18n="planTrip">Plan a trip</a>
+            <a class="secondary-link" href="pages/community.html" data-i18n="joinCommunity">Join community</a>
+          </div>
+        </div>
+        <aside class="live-feed-card" aria-label="Live community feed">
+          <span class="live-feed-label" data-i18n="liveFeed">Live Feed</span>
+          <article class="feed-post">
+            <div class="feed-avatar orange-avatar"></div>
+            <div>
+              <h3>Priya Sharma</h3>
+              <p class="feed-handle">@priya_travels</p>
+            </div>
+            <p data-i18n="priyaStory">Just completed the most scenic route from Manali to Leh. The views were breathtaking. Highly recommend taking the early morning bus for sunrise views.</p>
+            <div class="feed-actions"><span>248 likes</span><span>32 comments</span><span data-i18n="share">Share</span></div>
+          </article>
+          <article class="feed-post">
+            <div class="feed-avatar green-avatar"></div>
+            <div>
+              <h3>Rahul Kumar</h3>
+              <p class="feed-handle">@rahul_explorer</p>
+            </div>
+            <p data-i18n="rahulStory">Pro tip: Book your tickets at least 2 days in advance for weekend routes. Saved 30% on my Delhi-Jaipur journey.</p>
+            <div class="feed-actions"><span>156 likes</span><span>18 comments</span><span data-i18n="share">Share</span></div>
+          </article>
+          <a class="view-stories-link" href="pages/community.html" data-i18n="viewAllStories">View All Stories -></a>
+        </aside>
+      </section>
+
+      <section id="navigation" class="section navigation-page">
+        <div class="section-heading">
+          <p class="eyebrow" data-i18n="navigationEyebrow">Navigation</p>
+          <h2 data-i18n="navigationTitle">Choose where you want to go</h2>
+          <p data-i18n="navigationBody">Quick access to all major RouteNest modules for bus journey planning, community engagement, updates, and reviews.</p>
+        </div>
+        <div class="navigation-grid">
+          <a class="navigation-card" href="pages/community.html">
+            <span class="nav-icon">01</span>
+            <h3 data-i18n="navCardCommunity">Traveler Community</h3>
+            <p data-i18n="navCardCommunityBody">Share stories, tips, photos, comments, likes, reports, and forum discussions.</p>
+          </a>
+          <a class="navigation-card" href="pages/planner.html">
+            <span class="nav-icon">02</span>
+            <h3 data-i18n="navCardPlanner">Route Planner</h3>
+            <p data-i18n="navCardPlannerBody">Compare routes, add waypoints, save trips, and check traffic-style updates.</p>
+          </a>
+          <a class="navigation-card" href="pages/notifications.html">
+            <span class="nav-icon">03</span>
+            <h3 data-i18n="navCardNotifications">Notifications</h3>
+            <p data-i18n="navCardNotificationsBody">Manage email, push, promotions, retries, delivery status, and history.</p>
+          </a>
+          <a class="navigation-card" href="pages/reviews.html">
+            <span class="nav-icon">04</span>
+            <h3 data-i18n="navCardReviews">Route Reviews</h3>
+            <p data-i18n="navCardReviewsBody">Review completed journeys, report poor content, and find trusted reviewers.</p>
+          </a>
+          <a class="navigation-card" href="pages/profile.html">
+            <span class="nav-icon">05</span>
+            <h3 data-i18n="navCardProfile">Profile Activity</h3>
+            <p data-i18n="navCardProfileBody">View posts, saved routes, reviews, likes, and recent contribution history.</p>
+          </a>
+          <a class="navigation-card" href="pages/settings.html">
+            <span class="nav-icon">06</span>
+            <h3 data-i18n="navCardSettings">Language and Theme</h3>
+            <p data-i18n="navCardSettingsBody">Switch language, use dark mode, and keep preferences saved locally.</p>
+          </a>
+        </div>
+      </section>
+
+      <section id="community" class="section">
+        <div class="section-heading">
+          <p class="eyebrow" data-i18n="communityEyebrow">Community</p>
+          <h2 data-i18n="communityTitle">Stories, tips, photos, and forums</h2>
+          <p data-i18n="communityBody">Only verified users can post. Everyone can learn from routes, destinations, and travel advice.</p>
+        </div>
+        <div class="community-dashboard">
+          <article>
+            <span class="dashboard-number" id="verifiedPostCount">0</span>
+            <p>Verified posts</p>
+          </article>
+          <article>
+            <span class="dashboard-number" id="communityLikeCount">0</span>
+            <p>Total likes</p>
+          </article>
+          <article>
+            <span class="dashboard-number" id="communityCommentCount">0</span>
+            <p>Comments</p>
+          </article>
+          <article>
+            <span class="dashboard-number" id="communityReportCount">0</span>
+            <p>Reports</p>
+          </article>
+        </div>
+        <div class="forum-board-wrap">
+          <h3>Discussion boards</h3>
+          <div id="forumBoards" class="forum-boards"></div>
+        </div>
+        <div class="split-layout">
+          <form id="postForm" class="panel">
+            <h3 data-i18n="createPost">Create a post</h3>
+            <label><span data-i18n="verifiedUser">Verified user</span><select id="verifiedInput"><option value="true" data-i18n="yes">Yes</option><option value="false" data-i18n="no">No</option></select></label>
+            <label><span data-i18n="forumTopic">Forum topic</span><select id="topicInput"><option>Routes</option><option>Destinations</option><option>Travel Advice</option></select></label>
+            <label><span data-i18n="postTitle">Post title</span><input id="titleInput" required minlength="4" placeholder="Best seats on the Jaipur route" /></label>
+            <label><span data-i18n="postBody">Story or tip</span><textarea id="bodyInput" required minlength="20" placeholder="Share practical details from your journey."></textarea></label>
+            <label><span data-i18n="photoUrl">Photo URL</span><input id="photoInput" type="url" placeholder="https://example.com/photo.jpg" /></label>
+            <button type="submit" data-i18n="publish">Publish</button>
+            <p id="postMessage" class="form-message" role="status"></p>
+          </form>
+          <div>
+            <div class="topic-tabs" role="tablist" aria-label="Forum topics">
+              <button class="topic-button active" type="button" data-topic="All" data-i18n="all">All</button>
+              <button class="topic-button" type="button" data-topic="Routes">Routes</button>
+              <button class="topic-button" type="button" data-topic="Destinations">Destinations</button>
+              <button class="topic-button" type="button" data-topic="Travel Advice">Travel Advice</button>
+            </div>
+            <div id="highlightPost" class="highlight"></div>
+            <div id="postsGrid" class="card-grid"></div>
+          </div>
+        </div>
+        <div class="moderation-panel">
+          <div>
+            <p class="eyebrow">Moderation</p>
+            <h3>Reported content review</h3>
+            <p>Posts with multiple reports can be reviewed and removed by a moderator.</p>
+          </div>
+          <div id="moderationQueue" class="stack-list"></div>
+        </div>
+      </section>
+
+      <section id="planner" class="section route-band">
+        <div class="section-heading">
+          <p class="eyebrow" data-i18n="plannerEyebrow">Route planner</p>
+          <h2 data-i18n="plannerTitle">Compare routes with live traffic style updates</h2>
+          <p data-i18n="plannerBody">Add waypoints, compare distance and time, save frequent routes, and refresh conditions while planning.</p>
+        </div>
+        <div class="planner-shell">
+          <form id="routeForm" class="panel">
+            <label><span data-i18n="startLocation">Start location</span><input id="startInput" required value="Mumbai" /></label>
+            <label><span data-i18n="destination">Destination</span><input id="destinationInput" required value="Pune" /></label>
+            <label><span data-i18n="waypoints">Waypoints</span><input id="waypointInput" placeholder="Lonavala, Khandala" /></label>
+            <div class="button-row">
+              <button type="submit" data-i18n="suggestRoutes">Suggest routes</button>
+              <button id="refreshTraffic" class="ghost-button" type="button" data-i18n="refreshTraffic">Refresh traffic</button>
+            </div>
+          </form>
+          <div class="map-panel" aria-label="Interactive route map mockup">
+            <div class="map-photo">
+              <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1000&q=80" alt="Map and travel planning on a table" />
+              <div class="route-line route-line-a"></div>
+              <div class="route-line route-line-b"></div>
+              <span class="pin pin-start">A</span>
+              <span class="pin pin-end">B</span>
+            </div>
+          </div>
+        </div>
+        <div id="routesGrid" class="card-grid"></div>
+      </section>
+
+      <section id="notifications" class="section">
+        <div class="section-heading">
+          <p class="eyebrow" data-i18n="notificationsEyebrow">Notifications</p>
+          <h2 data-i18n="notificationsTitle">Reliable email and push updates</h2>
+          <p data-i18n="notificationsBody">Manage preferences, promotional opt-in, localization, delivery status, retries, and history.</p>
+        </div>
+        <div class="split-layout">
+          <form id="notificationPrefs" class="panel">
+            <h3 data-i18n="preferences">Preferences</h3>
+            <label class="check-row"><input id="emailPref" type="checkbox" checked /><span data-i18n="emailNotifications">Email notifications</span></label>
+            <label class="check-row"><input id="pushPref" type="checkbox" checked /><span data-i18n="pushNotifications">Push notifications</span></label>
+            <label class="check-row"><input id="promoPref" type="checkbox" /><span data-i18n="promoNotifications">Promotional offers</span></label>
+            <button type="submit" data-i18n="savePreferences">Save preferences</button>
+            <p id="prefMessage" class="form-message" role="status"></p>
+          </form>
+          <div id="notificationList" class="stack-list"></div>
+        </div>
+      </section>
+
+      <section id="reviews" class="section">
+        <div class="section-heading">
+          <p class="eyebrow" data-i18n="reviewsEyebrow">Route reviews</p>
+          <h2 data-i18n="reviewsTitle">Feedback from completed journeys</h2>
+          <p data-i18n="reviewsBody">Verified travelers can review a route once per completed journey. Reported reviews are removed from rating calculations.</p>
+        </div>
+        <div class="split-layout">
+          <form id="reviewForm" class="panel">
+            <h3 data-i18n="writeReview">Write a review</h3>
+            <label><span data-i18n="completedJourney">Completed journey</span><select id="completedInput"><option value="true" data-i18n="yes">Yes</option><option value="false" data-i18n="no">No</option></select></label>
+            <label><span data-i18n="routeName">Route</span><select id="reviewRouteInput"><option>Mumbai to Pune</option><option>Delhi to Jaipur</option><option>Bengaluru to Mysuru</option></select></label>
+            <label><span data-i18n="rating">Rating</span><select id="ratingInput"><option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option></select></label>
+            <label><span data-i18n="reviewText">Review</span><textarea id="reviewTextInput" minlength="30" required placeholder="Share boarding, comfort, timing, and safety details."></textarea></label>
+            <button type="submit" data-i18n="submitReview">Submit review</button>
+            <p id="reviewMessage" class="form-message" role="status"></p>
+          </form>
+          <div>
+            <div id="trustedReviewers" class="trusted-strip"></div>
+            <div id="reviewsList" class="stack-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="profile" class="section profile-section">
+        <div class="section-heading">
+          <p class="eyebrow" data-i18n="profileEyebrow">Profile activity</p>
+          <h2 data-i18n="profileTitle">Traveler contributions</h2>
+        </div>
+        <div id="activityFeed" class="activity-grid"></div>
+      </section>
+    </main>
+    <footer class="footer"><span>RouteNest</span><span data-i18n="footerText">Built for responsive internship project evaluation.</span></footer>
+    <script src="script.js"></script>
+  </body>
+</html>

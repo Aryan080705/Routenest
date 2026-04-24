@@ -1,0 +1,27 @@
+{
+  "name": "routenest",
+  "version": "1.0.0",
+  "private": true,
+  "description": "RouteNest bus travel community and journey platform",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "serve": "node backend/server.js"
+  },
+  "keywords": [
+    "bus",
+    "travel",
+    "community",
+    "route-planner",
+    "notifications"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

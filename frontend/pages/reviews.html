@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reviews | RouteNest</title>
+    <script>
+      try {
+        const saved = JSON.parse(localStorage.getItem("routenest-state") || "{}");
+        const theme = saved.theme === "dark" ? "dark" : "light";
+        document.documentElement.classList.toggle("dark", theme === "dark");
+        document.documentElement.dataset.theme = theme;
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body data-page-name="navReviews">
+    <header class="site-header">
+      <a class="brand" href="../index.html"><span class="brand-mark">RN</span><span>RouteNest</span></a>
+      <nav><a href="../index.html" data-i18n="navHome">Navigation</a><a href="community.html" data-i18n="navCommunity">Community</a><a href="planner.html" data-i18n="navPlanner">Planner</a><a href="notifications.html" data-i18n="navNotifications">Notifications</a><a href="reviews.html" data-i18n="navReviews">Reviews</a></nav>
+      <div class="header-actions"><select id="languageSelect"><option value="en">English</option><option value="hi">Hindi</option><option value="es">Spanish</option></select><button id="themeToggle" class="ghost-button" type="button">Dark mode</button></div>
+    </header>
+    <main>
+      <section id="reviews" class="section">
+        <div class="section-heading"><p class="eyebrow" data-i18n="reviewsEyebrow">Route reviews</p><h2 data-i18n="reviewsTitle">Feedback from completed journeys</h2><p data-i18n="reviewsBody">Verified travelers can review a route once per completed journey. Reported reviews are removed from rating calculations.</p></div>
+        <div class="split-layout">
+          <form id="reviewForm" class="panel">
+            <h3 data-i18n="writeReview">Write a review</h3>
+            <label><span data-i18n="completedJourney">Completed journey</span><select id="completedInput"><option value="true" data-i18n="yes">Yes</option><option value="false" data-i18n="no">No</option></select></label>
+            <label><span data-i18n="routeName">Route</span><select id="reviewRouteInput"><option>Mumbai to Pune</option><option>Delhi to Jaipur</option><option>Bengaluru to Mysuru</option></select></label>
+            <label><span data-i18n="rating">Rating</span><select id="ratingInput"><option value="5">5</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option></select></label>
+            <label><span data-i18n="reviewText">Review</span><textarea id="reviewTextInput" minlength="30" required placeholder="Share boarding, comfort, timing, and safety details." data-i18n-placeholder="reviewPlaceholder"></textarea></label>
+            <button type="submit" data-i18n="submitReview">Submit review</button>
+            <p id="reviewMessage" class="form-message" role="status"></p>
+          </form>
+          <div><div id="trustedReviewers" class="trusted-strip"></div><div id="reviewsList" class="stack-list"></div></div>
+        </div>
+      </section>
+    </main>
+    <script src="../script.js"></script>
+  </body>
+</html>

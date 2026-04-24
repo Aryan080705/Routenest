@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Community | RouteNest</title>
+    <script>
+      try {
+        const saved = JSON.parse(localStorage.getItem("routenest-state") || "{}");
+        const theme = saved.theme === "dark" ? "dark" : "light";
+        document.documentElement.classList.toggle("dark", theme === "dark");
+        document.documentElement.dataset.theme = theme;
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body data-page-name="navCommunity">
+    <header class="site-header">
+      <a class="brand" href="../index.html"><span class="brand-mark">RN</span><span>RouteNest</span></a>
+      <nav aria-label="Main navigation">
+        <a href="../index.html" data-i18n="navHome">Navigation</a>
+        <a href="community.html" data-i18n="navCommunity">Community</a>
+        <a href="planner.html" data-i18n="navPlanner">Planner</a>
+        <a href="notifications.html" data-i18n="navNotifications">Notifications</a>
+        <a href="reviews.html" data-i18n="navReviews">Reviews</a>
+      </nav>
+      <div class="header-actions">
+        <select id="languageSelect" aria-label="Language selector"><option value="en">English</option><option value="hi">Hindi</option><option value="es">Spanish</option></select>
+        <button id="themeToggle" class="ghost-button" type="button" data-i18n="darkMode">Dark mode</button>
+      </div>
+    </header>
+    <main>
+      <section id="community" class="section">
+        <div class="section-heading">
+          <p class="eyebrow" data-i18n="communityEyebrow">Community</p>
+          <h2 data-i18n="communityTitle">Stories, tips, photos, and forums</h2>
+          <p data-i18n="communityBody">Only verified users can post. Everyone can learn from routes, destinations, and travel advice.</p>
+        </div>
+        <div class="community-dashboard">
+          <article><span class="dashboard-number" id="verifiedPostCount">0</span><p>Verified posts</p></article>
+          <article><span class="dashboard-number" id="communityLikeCount">0</span><p>Total likes</p></article>
+          <article><span class="dashboard-number" id="communityCommentCount">0</span><p>Comments</p></article>
+          <article><span class="dashboard-number" id="communityReportCount">0</span><p>Reports</p></article>
+        </div>
+        <div class="forum-board-wrap">
+          <h3>Discussion boards</h3>
+          <div id="forumBoards" class="forum-boards"></div>
+        </div>
+        <div class="split-layout">
+          <form id="postForm" class="panel">
+            <h3 data-i18n="createPost">Create a post</h3>
+            <label><span data-i18n="verifiedUser">Verified user</span><select id="verifiedInput"><option value="true" data-i18n="yes">Yes</option><option value="false" data-i18n="no">No</option></select></label>
+            <label><span data-i18n="forumTopic">Forum topic</span><select id="topicInput"><option>Routes</option><option>Destinations</option><option>Travel Advice</option></select></label>
+            <label><span data-i18n="postTitle">Post title</span><input id="titleInput" required minlength="4" placeholder="Best seats on the Jaipur route" data-i18n-placeholder="titlePlaceholder" /></label>
+            <label><span data-i18n="postBody">Story or tip</span><textarea id="bodyInput" required minlength="20" placeholder="Share practical details from your journey." data-i18n-placeholder="bodyPlaceholder"></textarea></label>
+            <label><span data-i18n="photoUrl">Photo URL</span><input id="photoInput" type="url" placeholder="https://example.com/photo.jpg" data-i18n-placeholder="photoPlaceholder" /></label>
+            <button type="submit" data-i18n="publish">Publish</button>
+            <p id="postMessage" class="form-message" role="status"></p>
+          </form>
+          <div>
+            <div class="topic-tabs" role="tablist" aria-label="Forum topics">
+              <button class="topic-button active" type="button" data-topic="All" data-i18n="all">All</button>
+              <button class="topic-button" type="button" data-topic="Routes">Routes</button>
+              <button class="topic-button" type="button" data-topic="Destinations">Destinations</button>
+              <button class="topic-button" type="button" data-topic="Travel Advice">Travel Advice</button>
+            </div>
+            <div id="highlightPost" class="highlight"></div>
+            <div id="postsGrid" class="card-grid"></div>
+          </div>
+        </div>
+        <div class="moderation-panel">
+          <div><p class="eyebrow">Moderation</p><h3>Reported content review</h3><p>Posts with reports can be reviewed and removed by a moderator.</p></div>
+          <div id="moderationQueue" class="stack-list"></div>
+        </div>
+      </section>
+    </main>
+    <script src="../script.js"></script>
+  </body>
+</html>

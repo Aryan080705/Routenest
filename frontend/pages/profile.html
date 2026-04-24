@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile | RouteNest</title>
+    <script>
+      try {
+        const saved = JSON.parse(localStorage.getItem("routenest-state") || "{}");
+        const theme = saved.theme === "dark" ? "dark" : "light";
+        document.documentElement.classList.toggle("dark", theme === "dark");
+        document.documentElement.dataset.theme = theme;
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body data-page-name="profileTitle">
+    <header class="site-header">
+      <a class="brand" href="../index.html"><span class="brand-mark">RN</span><span>RouteNest</span></a>
+      <nav><a href="../index.html" data-i18n="navHome">Navigation</a><a href="community.html" data-i18n="navCommunity">Community</a><a href="planner.html" data-i18n="navPlanner">Planner</a><a href="notifications.html" data-i18n="navNotifications">Notifications</a><a href="reviews.html" data-i18n="navReviews">Reviews</a></nav>
+      <div class="header-actions"><select id="languageSelect"><option value="en">English</option><option value="hi">Hindi</option><option value="es">Spanish</option></select><button id="themeToggle" class="ghost-button" type="button">Dark mode</button></div>
+    </header>
+    <main>
+      <section id="profile" class="section profile-section">
+        <div class="section-heading"><p class="eyebrow" data-i18n="profileEyebrow">Profile activity</p><h2 data-i18n="profileTitle">Traveler contributions</h2><p>Your posts, comments, reports, saved routes, and reviews appear here.</p></div>
+        <div id="activityFeed" class="activity-grid"></div>
+      </section>
+    </main>
+    <script src="../script.js"></script>
+  </body>
+</html>

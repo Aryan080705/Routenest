@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notifications | RouteNest</title>
+    <script>
+      try {
+        const saved = JSON.parse(localStorage.getItem("routenest-state") || "{}");
+        const theme = saved.theme === "dark" ? "dark" : "light";
+        document.documentElement.classList.toggle("dark", theme === "dark");
+        document.documentElement.dataset.theme = theme;
+      } catch {
+        document.documentElement.dataset.theme = "light";
+      }
+    </script>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body data-page-name="navNotifications">
+    <header class="site-header">
+      <a class="brand" href="../index.html"><span class="brand-mark">RN</span><span>RouteNest</span></a>
+      <nav><a href="../index.html" data-i18n="navHome">Navigation</a><a href="community.html" data-i18n="navCommunity">Community</a><a href="planner.html" data-i18n="navPlanner">Planner</a><a href="notifications.html" data-i18n="navNotifications">Notifications</a><a href="reviews.html" data-i18n="navReviews">Reviews</a></nav>
+      <div class="header-actions"><select id="languageSelect"><option value="en">English</option><option value="hi">Hindi</option><option value="es">Spanish</option></select><button id="themeToggle" class="ghost-button" type="button">Dark mode</button></div>
+    </header>
+    <main>
+      <section id="notifications" class="section notification-page">
+        <div class="section-heading"><p class="eyebrow" data-i18n="notificationsEyebrow">Notifications</p><h2 data-i18n="notificationsTitle">Reliable email and push updates</h2><p data-i18n="notificationsBody">Manage preferences, promotional opt-in, localization, delivery status, retries, and history.</p></div>
+        <div class="notification-dashboard">
+          <article><span class="dashboard-number" id="totalNotificationCount">0</span><p data-i18n="totalLogged">Total logged</p></article>
+          <article><span class="dashboard-number" id="deliveredNotificationCount">0</span><p data-i18n="deliveredCount">Delivered</p></article>
+          <article><span class="dashboard-number" id="retryNotificationCount">0</span><p data-i18n="retryingCount">Retrying</p></article>
+          <article><span class="dashboard-number" id="failedNotificationCount">0</span><p data-i18n="failedCount">Failed</p></article>
+        </div>
+        <div class="split-layout">
+          <form id="notificationPrefs" class="panel">
+            <h3 data-i18n="preferences">Preferences</h3>
+            <label class="check-row"><input id="emailPref" type="checkbox" checked /><span data-i18n="emailNotifications">Email notifications</span></label>
+            <label class="check-row"><input id="pushPref" type="checkbox" checked /><span data-i18n="pushNotifications">Push notifications</span></label>
+            <label class="check-row"><input id="promoPref" type="checkbox" /><span data-i18n="promoNotifications">Promotional offers</span></label>
+            <button type="submit" data-i18n="savePreferences">Save preferences</button>
+            <p id="prefMessage" class="form-message" role="status"></p>
+          </form>
+          <div class="panel">
+            <h3 data-i18n="sendTestNotification">Send test notification</h3>
+            <p class="muted-copy" data-i18n="sendTestBody">Generate real-time style updates for key bus events. Delivery follows the preferences selected on this page.</p>
+            <div class="event-grid">
+              <button type="button" data-notification-event="booking" data-i18n="eventBooking">Booking confirmation</button>
+              <button type="button" data-notification-event="cancellation" data-i18n="eventCancellation">Cancellation</button>
+              <button type="button" data-notification-event="schedule" data-i18n="eventSchedule">Schedule change</button>
+              <button type="button" data-notification-event="reminder" data-i18n="eventReminder">Journey reminder</button>
+              <button type="button" data-notification-event="promo" data-i18n="eventPromo">Promotional offer</button>
+            </div>
+            <p id="notificationEventMessage" class="form-message" role="status"></p>
+          </div>
+        </div>
+        <div class="history-layout">
+          <div>
+            <p class="eyebrow" data-i18n="liveUpdates">Live updates</p>
+            <h3 data-i18n="latestNotifications">Latest notifications</h3>
+            <div id="notificationList" class="stack-list"></div>
+          </div>
+          <div>
+            <p class="eyebrow" data-i18n="history">History</p>
+            <h3 data-i18n="notificationLog">Notification log</h3>
+            <div id="notificationHistory" class="stack-list"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="../script.js"></script>
+  </body>
+</html>
