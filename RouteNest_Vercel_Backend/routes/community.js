@@ -271,12 +271,12 @@ router.post("/:id/share", (req, res) => {
   if (!p) return res.status(404).json({ error: "Post not found." });
 
   const { platform } = req.body || {};
-  const validPlatforms = ["twitter", "facebook", "instagram", "whatsapp"];
+  const validPlatforms = ["twitter", "facebook", "instagram", "whatsapp", "native"];
   if (!validPlatforms.includes(platform)) {
     return res.status(400).json({ error: "Invalid platform." });
   }
 
-  p.shares = p.shares || { twitter: 0, facebook: 0, instagram: 0, whatsapp: 0 };
+  p.shares = p.shares || { twitter: 0, facebook: 0, instagram: 0, whatsapp: 0, native: 0 };
   p.shares[platform] = (p.shares[platform] || 0) + 1;
 
   res.json({ id: p.id, shares: p.shares });
