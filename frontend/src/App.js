@@ -436,8 +436,8 @@ function PlannerPage() {
                 attributionControl={false}
               >
                 <_TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution="&copy; OpenStreetMap"
+                  url={`https://api.tomtom.com/map/1/tile/basic/main/{z}/{x}/{y}.png?key=${process.env.REACT_APP_TOMTOM_API_KEY || 'YOUR_TOMTOM_KEY'}`}
+                  attribution="&copy; TomTom"
                   maxNativeZoom={18}
                   maxZoom={18}
                   keepBuffer={2}

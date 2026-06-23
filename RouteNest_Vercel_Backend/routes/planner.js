@@ -73,35 +73,50 @@ function toRoutePayload(route, index) {
   };
 }
 
-async function buildOSRMRoutes(start, destination, waypoints = []) {
+async function buildORSRoutes(start, destination, waypoints = []) {
   const points = [start, ...waypoints.slice(0, 2), destination];
   const coords = [];
   for (const p of points) coords.push(await geocodeIndia(p));
 
-  const coordString = coords.map(([lon, lat]) => `${lon},${lat}`).join(";");
+  const coordString = coords.map(([lon, lat]) => `[${lon},${lat}]`).join(",");
+  const body = `{"coordinates":[${coordString}]}`;
   
   // Instant millisecond cache hit for identical routes
   const cacheKey = coordString;
   if (routeCache.has(cacheKey)) return routeCache.get(cacheKey);
 
-  // alternatives=true asks OSRM for multiple options
-  const url = `https://router.project-osrm.org/route/v1/driving/${coordString}?overview=full&geometries=geojson&alternatives=true&steps=false`;
-  const response = await fetch(url);
-  if (!response.ok) throw new Error("OSRM routing failed");
+  const orsKey = process.env.ORS_API_KEY || "YOUR_ORS_API_KEY";
+  const url = `https://api.openrouteservice.org/v2/directions/driving-car/geojson`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Authorization": orsKey,
+      "Content-Type": "application/json"
+    },
+    body
+  });
+  
+  if (!response.ok) throw new Error("ORS routing failed");
   const json = await response.json();
-  if (json.code !== "Ok" || !Array.isArray(json.routes) || !json.routes.length) {
-    throw new Error("No OSRM route found");
+  if (!json.features || !json.features.length) {
+    throw new Error("No ORS route found");
   }
 
-  const payloads = json.routes.slice(0, 3).map((r, i) => toRoutePayload(r, i));
+  const payloads = json.features.slice(0, 3).map((f, i) => {
+    return toRoutePayload({
+      distance: f.properties?.summary?.distance || 0,
+      duration: f.properties?.summary?.duration || 0,
+      geometry: { coordinates: f.geometry?.coordinates || [] }
+    }, i);
+  });
 
-  // OSRM often returns 1 route (especially with waypoints). 
-  // Simulate alternatives to ensure users always see 3 routes to compare.
+  // ORS usually returns 1 route. Simulate alternatives to ensure users always see 3 routes to compare.
   if (payloads.length === 1) {
     const base = payloads[0];
     payloads.push({
       ...base,
-      id: `osrm-1-${Date.now()}`,
+      id: `ors-1-${Date.now()}`,
       name: "Alternate Route",
       distanceKm: Math.round(base.distanceKm * 1.05),
       etaMinutes: Math.round(base.etaMinutes * 1.1),
@@ -113,7 +128,7 @@ async function buildOSRMRoutes(start, destination, waypoints = []) {
     });
     payloads.push({
       ...base,
-      id: `osrm-2-${Date.now()}`,
+      id: `ors-2-${Date.now()}`,
       name: "Scenic Route",
       distanceKm: Math.round(base.distanceKm * 1.15),
       etaMinutes: Math.round(base.etaMinutes * 1.25),
@@ -127,7 +142,7 @@ async function buildOSRMRoutes(start, destination, waypoints = []) {
     const base = payloads[0];
     payloads.push({
       ...base,
-      id: `osrm-2-${Date.now()}`,
+      id: `ors-2-${Date.now()}`,
       name: "Scenic Route",
       distanceKm: Math.round(base.distanceKm * 1.15),
       etaMinutes: Math.round(base.etaMinutes * 1.25),
@@ -165,8 +180,8 @@ router.post("/plan", async (req, res) => {
     : [];
 
   try {
-    const routes = await buildOSRMRoutes(start, destination, waypoints);
-    return res.json({ source: "vendor", provider: "osrm", routes });
+    const routes = await buildORSRoutes(start, destination, waypoints);
+    return res.json({ source: "vendor", provider: "ors", routes });
   } catch (_error) {
     return res.status(400).json({
       error: "Unable to build route for these cities right now. Try a nearby city name."
