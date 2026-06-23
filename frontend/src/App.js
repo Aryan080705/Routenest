@@ -610,8 +610,20 @@ function CommunityPage() {
     try {
       await api.post(`/api/community/${p.id}/share`, { platform });
       const url = window.location.origin + `/community#post-${p.id}`;
-      const text = encodeURIComponent(p.title);
-      const links = { twitter: `https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}`, facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, whatsapp: `https://wa.me/?text=${text}%20${encodeURIComponent(url)}`, instagram: `https://www.instagram.com/?url=${encodeURIComponent(url)}` };
+      const text = p.title;
+      
+      // Native Web Share API for mobile/modern browsers
+      if (platform === "native" && navigator.share) {
+        await navigator.share({ title: text, text: `Check out this journey: ${text}`, url });
+        return;
+      }
+      
+      const links = { 
+        twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, 
+        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, 
+        whatsapp: `https://wa.me/?text=${encodeURIComponent(text)}%20${encodeURIComponent(url)}`, 
+        instagram: `https://www.instagram.com/?url=${encodeURIComponent(url)}` 
+      };
       if (links[platform]) window.open(links[platform], "_blank");
       load();
     } catch { toast(t("errors.network"), "error"); }
@@ -690,10 +702,9 @@ function CommunityPage() {
             <div className="post-actions">
               <button className={`action-btn ${user && Array.isArray(p.likes) && p.likes.includes(user.id) ? "liked" : ""}`} onClick={() => like(p)} data-testid={`like-${p.id}`}>♥ <span data-testid={`like-count-${p.id}`}>{p.likeCount}</span></button>
               <button className="action-btn" data-testid={`comment-count-${p.id}`}>💬 {p.commentCount}</button>
-              <button className="action-btn" onClick={() => share(p, "twitter")} data-testid={`share-tw-${p.id}`}>↗ Twitter</button>
+              <button className="action-btn" onClick={() => share(p, "native")} data-testid={`share-native-${p.id}`}>↗ Share</button>
               <button className="action-btn" onClick={() => share(p, "whatsapp")} data-testid={`share-wa-${p.id}`}>↗ WhatsApp</button>
-              <button className="action-btn" onClick={() => share(p, "facebook")} data-testid={`share-fb-${p.id}`}>↗ Facebook</button>
-              <button className="action-btn" onClick={() => share(p, "instagram")} data-testid={`share-ig-${p.id}`}>↗ Instagram</button>
+              <button className="action-btn" onClick={() => share(p, "twitter")} data-testid={`share-tw-${p.id}`}>↗ Twitter</button>
               {user && <button className="action-btn" onClick={() => report(p)} data-testid={`report-${p.id}`}>⚑ {t("community.report")}</button>}
               {user && p.authorId === user.id && editingId !== p.id && <button className="action-btn" onClick={() => startEdit(p)} data-testid={`edit-${p.id}`}>✎ {t("reviews.edit")}</button>}
               {user && p.authorId === user.id && <button className="action-btn btn-danger" onClick={() => del(p)} data-testid={`delete-${p.id}`}>{t("community.delete")}</button>}
@@ -795,7 +806,8 @@ function ReviewsPage() {
     try { await api.patch(`/api/reviews/${r.id}`, { text: editText, rating: editRating }); setEditing(null); load(); toast(t("success.saved")); }
     catch (err) { toast(err.response?.data?.detail || err.response?.data?.error || t("errors.network"), "error"); }
   };
-  const canEdit = (r) => user && (r.userId === user.id || r.user === user.name) && (Date.now() - new Date(r.createdAt).getTime()) < 24 * 3600 * 1000;
+  const canEdit = (r) => user && (r.userId === user.id || r.user === user.name);
+  const isPast24h = (r) => (Date.now() - new Date(r.createdAt).getTime()) > 24 * 3600 * 1000;
   const Stars = ({ n }) => <span className="stars">{"★".repeat(n)}{"☆".repeat(5 - n)}</span>;
 
   return (
@@ -839,8 +851,8 @@ function ReviewsPage() {
             </div>
             {editing === r.id ? (<>
               <div className="field" style={{ marginBottom: 8 }}>
-                <label style={{ fontSize: 13, fontWeight: 600, marginBottom: 4, display: "block" }}>{t("reviews.rating")}</label>
-                <div className="rating-input">
+                <label style={{ fontSize: 13, fontWeight: 600, marginBottom: 4, display: "block" }}>{t("reviews.rating")} {isPast24h(r) && <span className="muted" style={{ fontWeight: 400 }}>(Locked after 24h)</span>}</label>
+                <div className="rating-input" style={{ opacity: isPast24h(r) ? 0.6 : 1, pointerEvents: isPast24h(r) ? "none" : "auto" }}>
                   {[1,2,3,4,5].map(n => (
                     <button key={n} type="button" className={n <= editRating ? "on" : ""} onClick={() => setEditRating(n)} data-testid={`rev-edit-star-${r.id}-${n}`}>★</button>
                   ))}
@@ -1137,11 +1149,13 @@ function NotificationsPage() {
 // ─── Profile ───
 function ProfilePage() {
   const { t } = useI18n(); const { user } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [saved, setSaved] = useState([]);
   const [tab, setTab] = useState("posts");
   const [busy, setBusy] = useState(false);
+  const [prefs, setPrefs] = useState({ email: true, push: true, promos: false });
   const toast = useToast();
   
   const loadProfile = useCallback(() => {
@@ -1149,6 +1163,7 @@ function ProfilePage() {
     api.get(`/api/profiles/${user.id}`).then(r => setProfile(r.data)).catch(() => {});
     api.get(`/api/reviews?userId=${user.id}`).then(r => setReviews(r.data)).catch(() => {});
     api.get(`/api/planner/saved/${user.id}`).then(r => setSaved(r.data)).catch(() => {});
+    if (user.notifications) setPrefs({ email: user.notifications.email ?? true, push: user.notifications.push ?? true, promos: user.notifications.promos ?? false });
   }, [user]);
 
   useEffect(() => { loadProfile(); }, [loadProfile]);
@@ -1165,6 +1180,13 @@ function ProfilePage() {
       setBusy(false);
     }
   };
+
+  const savePrefs = async (newPrefs) => {
+    setPrefs(newPrefs);
+    try { await api.patch("/api/auth/me/preferences", { notifications: newPrefs }); toast("Preferences saved."); }
+    catch { toast("Failed to save preferences", "error"); }
+  };
+
   if (!user) return <Navigate to="/login" />;
   if (!profile) return <div className="container"><div className="empty"><span className="spinner" /></div></div>;
 
@@ -1211,6 +1233,7 @@ function ProfilePage() {
         <button className={`tab ${tab === "posts" ? "active" : ""}`} onClick={() => setTab("posts")} data-testid="profile-tab-posts">{t("profile.posts")}</button>
         <button className={`tab ${tab === "reviews" ? "active" : ""}`} onClick={() => setTab("reviews")} data-testid="profile-tab-reviews">{t("reviews.title")}</button>
         <button className={`tab ${tab === "activity" ? "active" : ""}`} onClick={() => setTab("activity")} data-testid="profile-tab-activity">{t("profile.travelHistory")}</button>
+        <button className={`tab ${tab === "preferences" ? "active" : ""}`} onClick={() => setTab("preferences")} data-testid="profile-tab-preferences">Preferences</button>
       </div>
 
       {tab === "posts" && (
@@ -1250,6 +1273,9 @@ function ProfilePage() {
               </div>
               <strong>{a.title}</strong>
               {a.body && <div className="muted" style={{ fontSize: 13, marginTop: 4 }}>{a.body.slice(0, 120)}{a.body.length > 120 ? "…" : ""}</div>}
+              {a.kind === "route" && (
+                <button className="btn" style={{ marginTop: 8, padding: "4px 12px", fontSize: 13 }} onClick={() => navigate("/reviews")}>Mark Journey Complete & Review</button>
+              )}
             </div>
           ))}
         </div>

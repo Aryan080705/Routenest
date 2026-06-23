@@ -65,7 +65,7 @@ export function ThemeProvider({ children }) {
   const persistToServer = (next) => {
     const token = (() => { try { return localStorage.getItem("token"); } catch { return null; } })();
     if (!token) return;
-    api.put("/api/users/me/theme", { theme: next }).catch(() => {});
+    api.patch("/api/auth/me/preferences", { theme: next }).catch(() => {});
   };
 
   const setTheme = (next) => {

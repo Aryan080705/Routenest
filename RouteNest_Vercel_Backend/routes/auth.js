@@ -37,7 +37,7 @@ router.post("/register", (req, res) => {
     name: String(name).trim(),
     email: normalized,
     password: String(password),
-    verified: false,
+    verified: true, // Auto-verify so users can post and review
     theme: null,
     language: null,
     createdAt: new Date().toISOString()
@@ -50,7 +50,7 @@ router.post("/register", (req, res) => {
     userId: newId,
     name: user.name,
     email: user.email,
-    verified: false,
+    verified: true,
     bio: "",
     // This API tries to generate a male/female avatar based on the name
     avatar: `https://avatar.iran.liara.run/public?username=${encodeURIComponent(user.name)}`,
@@ -85,14 +85,14 @@ router.post("/login", (req, res) => {
       name: normalized.split("@")[0] || "User",
       email: normalized,
       password: String(password),
-      verified: false,
+      verified: true,
       theme: null,
       language: null,
       createdAt: new Date().toISOString()
     };
     users.push(user);
     userProfiles.push({
-      id: newId, userId: newId, name: user.name, email: user.email, verified: false,
+      id: newId, userId: newId, name: user.name, email: user.email, verified: true,
       bio: "", avatar: `https://avatar.iran.liara.run/public?username=${encodeURIComponent(user.name)}`,
       totalPosts: 0, totalLikes: 0, followersCount: 0, joinedAt: user.createdAt, badges: [], socialLinks: {}
     });
@@ -115,6 +115,24 @@ router.get("/me", (req, res) => {
   const user = users.find((u) => u.id === userId);
   if (!user) return res.status(401).json({ error: "Unauthorized" });
   seedDemoNotifications(user.id);
+  res.json({ user: hidePassword(user) });
+});
+
+router.patch("/me/preferences", (req, res) => {
+  const auth = req.headers.authorization || "";
+  const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  const { users, sessions } = getStore();
+  const userId = sessions[token];
+  if (!userId) return res.status(401).json({ error: "Unauthorized" });
+  
+  const user = users.find((u) => u.id === userId);
+  if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+  const { theme, language, notifications } = req.body || {};
+  if (theme !== undefined) user.theme = theme;
+  if (language !== undefined) user.language = language;
+  if (notifications !== undefined) user.notifications = { ...(user.notifications || {}), ...notifications };
+
   res.json({ user: hidePassword(user) });
 });
 

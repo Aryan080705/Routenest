@@ -15,7 +15,7 @@ function persistToServer(lng) {
   let token = null;
   try { token = localStorage.getItem("token"); } catch {}
   if (!token) return;
-  api.put("/api/users/me/language", { language: lng }).catch(() => {});
+  api.patch("/api/auth/me/preferences", { language: lng }).catch(() => {});
 }
 
 export function I18nProvider({ children }) {
