@@ -8,9 +8,25 @@ const StoreSchema = new mongoose.Schema({
 
 const StoreModel = mongoose.models.Store || mongoose.model('Store', StoreSchema);
 
+const fs = require('fs');
+const path = require('path');
+const DATA_FILE = path.join(__dirname, '..', 'data.json');
+
 async function connectDB() {
   if (!process.env.MONGODB_URI) {
-    console.log("⚠️ MONGODB_URI not found. Running in volatile memory mode.");
+    console.log("⚠️ MONGODB_URI not found. Running in local file mode.");
+    try {
+      if (fs.existsSync(DATA_FILE)) {
+        const rawData = fs.readFileSync(DATA_FILE, 'utf-8');
+        setStore(JSON.parse(rawData));
+        console.log("📥 Loaded store state from local data.json.");
+      } else {
+        fs.writeFileSync(DATA_FILE, JSON.stringify(getStore()));
+        console.log("🌱 Created new initial store in local data.json.");
+      }
+    } catch (err) {
+      console.error("❌ Local file DB error:", err);
+    }
     return;
   }
   
@@ -38,9 +54,16 @@ async function connectDB() {
 }
 
 async function syncStoreToDB() {
-  if (!process.env.MONGODB_URI) return;
+  const currentData = getStore();
+  if (!process.env.MONGODB_URI) {
+    try {
+      fs.writeFileSync(DATA_FILE, JSON.stringify(currentData, null, 2));
+    } catch (err) {
+      console.error("❌ Failed to sync store to local data.json:", err);
+    }
+    return;
+  }
   try {
-    const currentData = getStore();
     await StoreModel.updateOne(
       { key: 'main' },
       { data: currentData },
