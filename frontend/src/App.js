@@ -208,11 +208,14 @@ function RegisterPage() {
 }
 
 // ─── Planner ───
+// Smoothly animates map to fit the active route
 function FitBounds({ routes, activeId }) {
   const map = _useMap();
   useEffect(() => {
     const r = routes.find(x => x.id === activeId) || routes[0];
-    if (r?.path?.length) map.fitBounds(r.path, { padding: [40, 40] });
+    if (r?.path?.length) {
+      map.flyToBounds(r.path, { padding: [40, 40], animate: true, duration: 0.8, easeLinearity: 0.5 });
+    }
   }, [routes, activeId, map]);
   return null;
 }
@@ -412,11 +415,40 @@ function PlannerPage() {
         <div>
           <div className="map-wrap">
             {leafletReady && _MapContainer ? (
-              <_MapContainer center={center} zoom={6} scrollWheelZoom>
-                <_TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap" />
+              <_MapContainer
+                center={center}
+                zoom={6}
+                scrollWheelZoom={true}
+                preferCanvas={true}
+                tap={true}
+                dragging={true}
+                touchZoom={true}
+                doubleClickZoom={true}
+                zoomControl={true}
+                attributionControl={false}
+              >
+                <_TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution="&copy; OpenStreetMap"
+                  maxNativeZoom={18}
+                  maxZoom={18}
+                  keepBuffer={2}
+                  updateWhenIdle={true}
+                  updateWhenZooming={false}
+                />
                 {routes.map(r => (
                   <React.Fragment key={r.id}>
-                    <_Polyline positions={r.path} pathOptions={{ color: r.id === activeId ? "#d44d2a" : "#888", weight: r.id === activeId ? 6 : 3, opacity: r.id === activeId ? 1 : .6 }} eventHandlers={{ click: () => setActiveId(r.id) }} />
+                    <_Polyline
+                      positions={r.path}
+                      pathOptions={{
+                        color: r.id === activeId ? "#d44d2a" : "#aaa",
+                        weight: r.id === activeId ? 6 : 3,
+                        opacity: r.id === activeId ? 1 : 0.5,
+                        lineCap: "round",
+                        lineJoin: "round",
+                      }}
+                      eventHandlers={{ click: () => setActiveId(r.id) }}
+                    />
                     {r.id === activeId && r.path.length > 0 && (<>
                       <_Marker position={r.path[0]}><_Popup>{t("planner.start")}: {start}</_Popup></_Marker>
                       <_Marker position={r.path[r.path.length - 1]}><_Popup>{t("planner.destination")}: {destination}</_Popup></_Marker>
