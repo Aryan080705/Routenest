@@ -1,8 +1,5 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState, useMemo, useCallback, Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate, Navigate } from "react-router-dom";
-import { MapContainer, TileLayer, Marker, Polyline, Popup, useMap } from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 import "./App.css";
 import { I18nProvider, useI18n } from "./i18n";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
@@ -10,13 +7,33 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import { api } from "./lib/api";
 import { getSocket } from "./lib/socket";
 
-// fix leaflet default icon paths
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-});
+// Leaflet loaded lazily — only when user visits /planner
+let _leafletLoaded = false;
+let _MapContainer, _TileLayer, _Marker, _Polyline, _Popup, _useMap, _L;
+
+async function loadLeaflet() {
+  if (_leafletLoaded) return;
+  const [RL, L] = await Promise.all([
+    import("react-leaflet"),
+    import("leaflet"),
+  ]);
+  await import("leaflet/dist/leaflet.css");
+  _MapContainer = RL.MapContainer;
+  _TileLayer = RL.TileLayer;
+  _Marker = RL.Marker;
+  _Polyline = RL.Polyline;
+  _Popup = RL.Popup;
+  _useMap = RL.useMap;
+  _L = L.default;
+  // fix leaflet icon
+  delete _L.Icon.Default.prototype._getIconUrl;
+  _L.Icon.Default.mergeOptions({
+    iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+    iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  });
+  _leafletLoaded = true;
+}
 
 // ─── Toast ───
 const ToastCtx = React.createContext(null);
@@ -192,7 +209,7 @@ function RegisterPage() {
 
 // ─── Planner ───
 function FitBounds({ routes, activeId }) {
-  const map = useMap();
+  const map = _useMap();
   useEffect(() => {
     const r = routes.find(x => x.id === activeId) || routes[0];
     if (r?.path?.length) map.fitBounds(r.path, { padding: [40, 40] });
@@ -201,6 +218,7 @@ function FitBounds({ routes, activeId }) {
 }
 function PlannerPage() {
   const { t } = useI18n(); const { user } = useAuth(); const toast = useToast();
+  const [leafletReady, setLeafletReady] = useState(false);
   const [start, setStart] = useState(""); const [destination, setDestination] = useState("");
   const [waypoints, setWaypoints] = useState([""]);
   const [routes, setRoutes] = useState([]); const [activeId, setActiveId] = useState(null);
@@ -208,6 +226,11 @@ function PlannerPage() {
   const [sortBy, setSortBy] = useState("recommended");
   const [autoRefresh, setAutoRefresh] = useState(true);
   const prevRecRef = React.useRef(null);
+
+  // Load Leaflet lazily — only runs once when planner page is visited
+  useEffect(() => {
+    loadLeaflet().then(() => setLeafletReady(true));
+  }, []);
 
   // Load saved routes: try API first, fall back to localStorage
   const loadSaved = useCallback(() => {
@@ -388,19 +411,25 @@ function PlannerPage() {
         </div>
         <div>
           <div className="map-wrap">
-            <MapContainer center={center} zoom={6} scrollWheelZoom>
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap" />
-              {routes.map(r => (
-                <React.Fragment key={r.id}>
-                  <Polyline positions={r.path} pathOptions={{ color: r.id === activeId ? "#d44d2a" : "#888", weight: r.id === activeId ? 6 : 3, opacity: r.id === activeId ? 1 : .6 }} eventHandlers={{ click: () => setActiveId(r.id) }} />
-                  {r.id === activeId && r.path.length > 0 && (<>
-                    <Marker position={r.path[0]}><Popup>{t("planner.start")}: {start}</Popup></Marker>
-                    <Marker position={r.path[r.path.length - 1]}><Popup>{t("planner.destination")}: {destination}</Popup></Marker>
-                  </>)}
-                </React.Fragment>
-              ))}
-              {routes.length > 0 && <FitBounds routes={routes} activeId={activeId} />}
-            </MapContainer>
+            {leafletReady && _MapContainer ? (
+              <_MapContainer center={center} zoom={6} scrollWheelZoom>
+                <_TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap" />
+                {routes.map(r => (
+                  <React.Fragment key={r.id}>
+                    <_Polyline positions={r.path} pathOptions={{ color: r.id === activeId ? "#d44d2a" : "#888", weight: r.id === activeId ? 6 : 3, opacity: r.id === activeId ? 1 : .6 }} eventHandlers={{ click: () => setActiveId(r.id) }} />
+                    {r.id === activeId && r.path.length > 0 && (<>
+                      <_Marker position={r.path[0]}><_Popup>{t("planner.start")}: {start}</_Popup></_Marker>
+                      <_Marker position={r.path[r.path.length - 1]}><_Popup>{t("planner.destination")}: {destination}</_Popup></_Marker>
+                    </>)}
+                  </React.Fragment>
+                ))}
+                {routes.length > 0 && <FitBounds routes={routes} activeId={activeId} />}
+              </_MapContainer>
+            ) : (
+              <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-soft)", borderRadius: 16 }}>
+                <span className="spinner" style={{ width: 28, height: 28, borderWidth: 3 }} />
+              </div>
+            )}
           </div>
           {routes.length === 0 ? <div className="empty">{t("planner.noRoutes")}</div> : (
             <>
