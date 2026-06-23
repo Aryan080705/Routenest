@@ -654,7 +654,24 @@ function CommunityPage() {
               </select>
             </div>
             <div className="field"><label>{t("community.postBody")}</label><textarea className="input" rows={4} value={np.body} onChange={e => setNp({ ...np, body: e.target.value })} data-testid="np-body" /></div>
-            <div className="field"><label>{t("community.photo")}</label><input className="input" value={np.photo} onChange={e => setNp({ ...np, photo: e.target.value })} data-testid="np-photo" /></div>
+            <div className="field">
+              <label>{t("community.photo")}</label>
+              <input 
+                type="file" 
+                accept="image/*" 
+                className="input" 
+                onChange={e => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => setNp({ ...np, photo: reader.result });
+                    reader.readAsDataURL(file);
+                  }
+                }} 
+                data-testid="np-photo-file" 
+              />
+              {np.photo && <img src={np.photo} alt="Preview" style={{ marginTop: 10, maxWidth: "100%", maxHeight: 200, borderRadius: 8, objectFit: "cover" }} />}
+            </div>
             <button className="btn btn-primary" onClick={create} data-testid="np-submit">{t("community.post")}</button>
           </div>
         )}

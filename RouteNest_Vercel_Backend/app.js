@@ -27,7 +27,7 @@ const app = express();
 
 // Global middleware
 app.use(corsMiddleware);
-app.use(express.json({ limit: "1mb" }));
+app.use(express.json({ limit: "10mb" }));
 app.use(requestLogger);
 
 // Global middleware to sync memory store to MongoDB on mutations
