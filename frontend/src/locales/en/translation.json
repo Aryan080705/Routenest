@@ -1,0 +1,158 @@
+{
+  "appName": "RouteNest",
+  "tagline": "Smart bus journeys, made human",
+  "nav": {
+    "home": "Home", "planner": "Planner", "community": "Community",
+    "reviews": "Reviews", "notifications": "Notifications",
+    "profile": "Profile", "settings": "Settings",
+    "login": "Login", "register": "Sign up", "logout": "Logout",
+    "admin": "Admin"
+  },
+  "home": {
+    "hero": "Plan smarter bus journeys, together.",
+    "sub": "Real OSRM routes, a vibrant traveler community, and live alerts — all in one place.",
+    "cta": "Open planner", "cta2": "Join the community",
+    "featuresTitle": "Everything you need on the road",
+    "f1Title": "Live route planner",
+    "f1": "OSRM-powered routes with traffic-aware ETAs and multiple alternatives.",
+    "f2Title": "Verified community",
+    "f2": "Travel stories, tips and route discussions from journey-verified members.",
+    "f3Title": "Smart notifications",
+    "f3": "Booking confirmations, schedule changes and journey reminders — multi-language.",
+    "activeTravelers": "Active Travelers",
+    "routesPlanned": "Routes Planned",
+    "aboutUs": "About Us",
+    "aboutText": "RouteNest was born out of a simple idea: making bus travel smarter, safer, and more connected. We believe that the best journeys are the ones shared with others. That's why we combined advanced real-time routing with a community-driven platform where travelers can share their stories, tips, and honest reviews.",
+    "globalReach": "🌍 Global Reach",
+    "verifiedUsers": "🛡️ Verified Users",
+    "realtimeData": "⚡ Real-time Data"
+  },
+  "planner": {
+    "title": "Route Planner",
+    "subtitle": "Get real OSRM routes with traffic awareness.",
+    "start": "Start location", "destination": "Destination",
+    "waypoint": "Waypoint (optional)", "addWaypoint": "+ Add waypoint",
+    "generate": "Generate route", "refreshTraffic": "Refresh traffic",
+    "compare": "Compare routes", "saved": "Saved routes",
+    "save": "Save", "saveAs": "Name this route",
+    "noRoutes": "Enter a start and destination to generate routes.",
+    "distance": "Distance", "eta": "ETA", "congestion": "Congestion",
+    "delay": "Delay", "recommended": "Recommended", "remove": "Remove",
+    "liveTraffic": "Live traffic"
+  },
+  "community": {
+    "title": "Community", "trending": "Trending", "latest": "Latest",
+    "new": "New post", "postTitle": "Title",
+    "postBody": "Share your story or tip…",
+    "topic": "Topic", "photo": "Photo URL (optional)",
+    "post": "Publish", "like": "Like", "liked": "Liked",
+    "comment": "Comment", "comments": "Comments", "reply": "Reply",
+    "report": "Report", "share": "Share", "delete": "Delete",
+    "writeComment": "Write a comment…",
+    "verifiedOnly": "Only verified users can post. Please sign in.",
+    "verifiedOnlyShort": "Only verified users can post to prevent spam.",
+    "reportReason": "Report reason",
+    "spam": "Spam", "abusive": "Abusive content",
+    "misleading": "Misleading", "inappropriate": "Inappropriate",
+    "noPosts": "Be the first to share a story.",
+    "forums": "Forums"
+  },
+  "forums": {
+    "title": "Forums",
+    "subtitle": "Join the conversation across routes, destinations, and travel tips.",
+    "noTopics": "No topics yet.",
+    "backToCategories": "← Back to categories",
+    "topics": "topics",
+    "posts": "posts"
+  },
+  "reviews": {
+    "title": "Reviews & Ratings",
+    "subtitle": "Honest feedback from verified travelers.",
+    "write": "Write a review",
+    "route": "Route (e.g., Mumbai to Pune)",
+    "journeyId": "Journey/Booking ID",
+    "rating": "Your rating",
+    "text": "Your review (min 30 chars)",
+    "completed": "I have completed this journey",
+    "submit": "Submit review", "helpful": "Helpful",
+    "edit": "Edit", "save": "Save changes", "reportR": "Report",
+    "average": "Average rating",
+    "basedOn": "based on {{n}} reviews",
+    "noReviews": "No reviews yet."
+  },
+  "notifications": {
+    "title": "Notifications", "markAll": "Mark all as read",
+    "empty": "You're all caught up.", "prefs": "Preferences",
+    "channels": "Channels", "email": "Email", "push": "Push", "sms": "SMS",
+    "types": "Notification types",
+    "booking": "Booking confirmations", "cancellation": "Cancellations",
+    "scheduleChange": "Schedule changes", "journeyReminder": "Journey reminders",
+    "promotional": "Promotional offers", "offers": "Special offers",
+    "quietHours": "Quiet hours", "enableQuiet": "Enable quiet hours",
+    "from": "From", "to": "To",
+    "language": "Notification language",
+    "save": "Save preferences",
+    "enablePush": "Enable browser push",
+    "pushEnabled": "Browser push enabled",
+    "testNotifications": "🧪 Test Notifications",
+    "deliveryLog": "📋 Delivery Log",
+    "noDeliveryLogs": "No delivery logs yet. Trigger a test notification first.",
+    "emailLog": "📧 Email Delivery Log",
+    "pushActive": "Push Notifications Active",
+    "vapidPush": "Real-time VAPID push enabled",
+    "browserPush": "Browser notifications enabled"
+  },
+  "auth": {
+    "loginTitle": "Welcome back",
+    "loginSub": "Sign in to plan, post and review.",
+    "registerTitle": "Create your account",
+    "registerSub": "Join verified travelers.",
+    "name": "Full name", "email": "Email", "password": "Password",
+    "login": "Sign in", "register": "Create account",
+    "needAccount": "Need an account?",
+    "haveAccount": "Already have an account?",
+    "or": "or"
+  },
+  "settings": {
+    "title": "Settings", "language": "Language", "theme": "Theme",
+    "light": "Light", "dark": "Dark",
+    "account": "Account", "saveProfile": "Save profile", "bio": "Bio"
+  },
+  "profile": {
+    "posts": "Posts", "followers": "Followers",
+    "joined": "Joined", "noPosts": "No posts yet.",
+    "likes": "Likes", "commentsLabel": "Comments",
+    "travelHistory": "Travel History & Activity",
+    "noActivity": "No recent history or activity.",
+    "requestVerification": "Request Verification"
+  },
+  "moderation": {
+    "title": "Admin Moderation",
+    "subtitle": "Review reported posts from the community.",
+    "noPending": "No pending reports.",
+    "reportReason": "Report Reason",
+    "reported": "Reported",
+    "removePost": "Remove Post",
+    "rejectReport": "Reject Report",
+    "postRemoved": "Post already removed or not found."
+  },
+  "errors": {
+    "required": "This field is required.",
+    "invalidEmail": "Enter a valid email.",
+    "short": "Password must be at least 6 characters.",
+    "network": "Network error. Please try again."
+  },
+  "success": {
+    "saved": "Saved.", "posted": "Posted.",
+    "reviewed": "Review submitted.",
+    "prefs": "Preferences updated."
+  },
+  "topics": {
+    "routes": "Routes", "destinations": "Destinations",
+    "tips": "Travel Tips", "safety": "Safety",
+    "budget": "Budget", "photos": "Photos"
+  },
+  "common": {
+    "save": "Save"
+  }
+}

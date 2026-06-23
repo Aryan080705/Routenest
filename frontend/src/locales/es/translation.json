@@ -1,0 +1,158 @@
+{
+  "appName": "RouteNest",
+  "tagline": "Viajes en bus más inteligentes, hechos a tu medida",
+  "nav": {
+    "home": "Inicio", "planner": "Planificador", "community": "Comunidad",
+    "reviews": "Reseñas", "notifications": "Notificaciones",
+    "profile": "Perfil", "settings": "Ajustes",
+    "login": "Entrar", "register": "Crear cuenta", "logout": "Salir",
+    "admin": "Admin"
+  },
+  "home": {
+    "hero": "Planifica viajes en bus más inteligentes, juntos.",
+    "sub": "Rutas reales con OSRM, comunidad vibrante y alertas en vivo — todo en un solo lugar.",
+    "cta": "Abrir planificador", "cta2": "Unirse a la comunidad",
+    "featuresTitle": "Todo lo que necesitas en la carretera",
+    "f1Title": "Planificador en vivo",
+    "f1": "Rutas OSRM con ETA según tráfico y varias alternativas.",
+    "f2Title": "Comunidad verificada",
+    "f2": "Historias, consejos y discusiones de miembros con viajes verificados.",
+    "f3Title": "Notificaciones inteligentes",
+    "f3": "Confirmaciones, cambios y recordatorios — en varios idiomas.",
+    "activeTravelers": "Viajeros activos",
+    "routesPlanned": "Rutas planificadas",
+    "aboutUs": "Sobre nosotros",
+    "aboutText": "RouteNest nació de una idea simple: hacer que los viajes en bus sean más inteligentes, seguros y conectados. Creemos que los mejores viajes son los que se comparten con otros. Por eso combinamos enrutamiento avanzado en tiempo real con una plataforma impulsada por la comunidad donde los viajeros pueden compartir sus historias, consejos y reseñas honestas.",
+    "globalReach": "🌍 Alcance global",
+    "verifiedUsers": "🛡️ Usuarios verificados",
+    "realtimeData": "⚡ Datos en tiempo real"
+  },
+  "planner": {
+    "title": "Planificador de rutas",
+    "subtitle": "Obtén rutas reales OSRM con conciencia del tráfico.",
+    "start": "Origen", "destination": "Destino",
+    "waypoint": "Punto intermedio (opcional)", "addWaypoint": "+ Añadir punto",
+    "generate": "Generar ruta", "refreshTraffic": "Actualizar tráfico",
+    "compare": "Comparar rutas", "saved": "Rutas guardadas",
+    "save": "Guardar", "saveAs": "Nombre de la ruta",
+    "noRoutes": "Introduce origen y destino para generar rutas.",
+    "distance": "Distancia", "eta": "ETA", "congestion": "Congestión",
+    "delay": "Retraso", "recommended": "Recomendada", "remove": "Quitar",
+    "liveTraffic": "Tráfico en vivo"
+  },
+  "community": {
+    "title": "Comunidad", "trending": "Tendencias", "latest": "Recientes",
+    "new": "Nueva publicación", "postTitle": "Título",
+    "postBody": "Comparte tu historia o consejo…",
+    "topic": "Tema", "photo": "URL de foto (opcional)",
+    "post": "Publicar", "like": "Me gusta", "liked": "Te gusta",
+    "comment": "Comentar", "comments": "Comentarios", "reply": "Responder",
+    "report": "Reportar", "share": "Compartir", "delete": "Eliminar",
+    "writeComment": "Escribe un comentario…",
+    "verifiedOnly": "Solo los usuarios verificados pueden publicar. Inicia sesión.",
+    "verifiedOnlyShort": "Solo los usuarios verificados pueden publicar para evitar spam.",
+    "reportReason": "Motivo del reporte",
+    "spam": "Spam", "abusive": "Contenido abusivo",
+    "misleading": "Engañoso", "inappropriate": "Inapropiado",
+    "noPosts": "Sé el primero en compartir una historia.",
+    "forums": "Foros"
+  },
+  "forums": {
+    "title": "Foros",
+    "subtitle": "Únete a la conversación sobre rutas, destinos y consejos de viaje.",
+    "noTopics": "Aún no hay temas.",
+    "backToCategories": "← Volver a categorías",
+    "topics": "temas",
+    "posts": "publicaciones"
+  },
+  "reviews": {
+    "title": "Reseñas y valoraciones",
+    "subtitle": "Opiniones honestas de viajeros verificados.",
+    "write": "Escribir reseña",
+    "route": "Ruta (p. ej., Mumbai a Pune)",
+    "journeyId": "ID de viaje/reserva",
+    "rating": "Tu valoración",
+    "text": "Tu reseña (mín. 30 caracteres)",
+    "completed": "He completado este viaje",
+    "submit": "Enviar reseña", "helpful": "Útil",
+    "edit": "Editar", "save": "Guardar cambios", "reportR": "Reportar",
+    "average": "Valoración media",
+    "basedOn": "según {{n}} reseñas",
+    "noReviews": "Aún no hay reseñas."
+  },
+  "notifications": {
+    "title": "Notificaciones", "markAll": "Marcar todo como leído",
+    "empty": "Estás al día.", "prefs": "Preferencias",
+    "channels": "Canales", "email": "Email", "push": "Push", "sms": "SMS",
+    "types": "Tipos de notificación",
+    "booking": "Confirmaciones de reserva", "cancellation": "Cancelaciones",
+    "scheduleChange": "Cambios de horario", "journeyReminder": "Recordatorios de viaje",
+    "promotional": "Ofertas promocionales", "offers": "Ofertas especiales",
+    "quietHours": "Horario silencioso", "enableQuiet": "Activar horario silencioso",
+    "from": "Desde", "to": "Hasta",
+    "language": "Idioma de notificaciones",
+    "save": "Guardar preferencias",
+    "enablePush": "Activar push del navegador",
+    "pushEnabled": "Push del navegador activado",
+    "testNotifications": "🧪 Probar notificaciones",
+    "deliveryLog": "📋 Registro de entrega",
+    "noDeliveryLogs": "Aún no hay registros. Primero envía una notificación de prueba.",
+    "emailLog": "📧 Registro de email",
+    "pushActive": "Notificaciones push activas",
+    "vapidPush": "Push VAPID en tiempo real activado",
+    "browserPush": "Notificaciones del navegador activadas"
+  },
+  "auth": {
+    "loginTitle": "Bienvenido de nuevo",
+    "loginSub": "Inicia sesión para planificar, publicar y reseñar.",
+    "registerTitle": "Crea tu cuenta",
+    "registerSub": "Únete a viajeros verificados.",
+    "name": "Nombre completo", "email": "Email", "password": "Contraseña",
+    "login": "Entrar", "register": "Crear cuenta",
+    "needAccount": "¿Necesitas una cuenta?",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "or": "o"
+  },
+  "settings": {
+    "title": "Ajustes", "language": "Idioma", "theme": "Tema",
+    "light": "Claro", "dark": "Oscuro",
+    "account": "Cuenta", "saveProfile": "Guardar perfil", "bio": "Biografía"
+  },
+  "profile": {
+    "posts": "Publicaciones", "followers": "Seguidores",
+    "joined": "Se unió", "noPosts": "Aún sin publicaciones.",
+    "likes": "Me gusta", "commentsLabel": "Comentarios",
+    "travelHistory": "Historial de viajes y actividad",
+    "noActivity": "No hay historial o actividad reciente.",
+    "requestVerification": "Solicitar verificación"
+  },
+  "moderation": {
+    "title": "Moderación de admin",
+    "subtitle": "Revisa las publicaciones reportadas de la comunidad.",
+    "noPending": "No hay reportes pendientes.",
+    "reportReason": "Motivo del reporte",
+    "reported": "Reportado",
+    "removePost": "Eliminar publicación",
+    "rejectReport": "Rechazar reporte",
+    "postRemoved": "La publicación ya fue eliminada o no se encontró."
+  },
+  "errors": {
+    "required": "Este campo es obligatorio.",
+    "invalidEmail": "Introduce un email válido.",
+    "short": "La contraseña debe tener al menos 6 caracteres.",
+    "network": "Error de red. Inténtalo de nuevo."
+  },
+  "success": {
+    "saved": "Guardado.", "posted": "Publicado.",
+    "reviewed": "Reseña enviada.",
+    "prefs": "Preferencias actualizadas."
+  },
+  "topics": {
+    "routes": "Rutas", "destinations": "Destinos",
+    "tips": "Consejos", "safety": "Seguridad",
+    "budget": "Económico", "photos": "Fotos"
+  },
+  "common": {
+    "save": "Guardar"
+  }
+}
