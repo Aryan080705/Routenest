@@ -321,6 +321,14 @@ function PlannerPage() {
   const trafficTag = (c) => c.delayMinutes <= 8 ? "tag-low" : c.delayMinutes <= 22 ? "tag-mid" : "tag-high";
   const center = useMemo(() => routes[0]?.path?.[0] || [20.5937, 78.9629], [routes]);
 
+  const formatTime = (mins) => {
+    if (!mins || isNaN(mins)) return "0m";
+    if (mins < 60) return `${mins}m`;
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return m > 0 ? `${h}h ${m}m` : `${h}h`;
+  };
+
   const sortedRoutes = useMemo(() => {
     const arr = [...routes];
     if (sortBy === "distance") arr.sort((a, b) => a.distanceKm - b.distanceKm);
@@ -354,9 +362,9 @@ function PlannerPage() {
                 </div>
               </td>
               <td data-label={t("planner.distance")}>{r.distanceKm} km</td>
-              <td data-label={t("planner.eta")}>{r.etaMinutes} min</td>
+              <td data-label={t("planner.eta")}>{formatTime(r.etaMinutes)}</td>
               <td data-label={t("planner.congestion")}><span className={`tag ${trafficTag(r)}`} data-testid={`compare-cong-${r.id}`}>{r.congestion}</span></td>
-              <td data-label={t("planner.delay")}>+{r.delayMinutes} min</td>
+              <td data-label={t("planner.delay")}>+{formatTime(r.delayMinutes)}</td>
               <td>
                 <button type="button" className={`btn ${r.id === activeId ? "btn-accent" : ""}`} onClick={(e) => { e.stopPropagation(); onPick(r.id); }} data-testid={`compare-select-${r.id}`} style={{ padding: "6px 14px", fontSize: 13 }}>
                   {r.id === activeId ? "✓" : "Select"}
