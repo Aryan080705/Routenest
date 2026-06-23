@@ -1226,6 +1226,7 @@ function ProfilePage() {
             <div className="muted">{profile.email}</div>
             <div className="row" style={{ gap: 20, marginTop: 10, flexWrap: "wrap" }}>
               <div><strong>{profile.postCount || 0}</strong> <span className="muted">{t("profile.posts")}</span></div>
+              <div><strong>{reviews.length || 0}</strong> <span className="muted">{t("reviews.title")}</span></div>
               <div><strong>{profile.engagementStats?.totalPostLikes || 0}</strong> <span className="muted">Likes</span></div>
               <div><strong>{profile.engagementStats?.totalComments || 0}</strong> <span className="muted">Comments</span></div>
               <div><strong>{profile.followersCount || 0}</strong> <span className="muted">{t("profile.followers")}</span></div>
