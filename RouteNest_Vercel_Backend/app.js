@@ -6,6 +6,10 @@ const corsMiddleware = require("./middleware/cors");
 const requestLogger = require("./middleware/requestLogger");
 const errorHandler = require("./middleware/errorHandler");
 
+const { connectDB, syncStoreToDB } = require("./data/db");
+// Initialize MongoDB connection
+connectDB();
+
 /* ── Route modules ─────────────────────────────────────── */
 const communityRoutes = require("./routes/community");
 const forumRoutes = require("./routes/forums");
@@ -25,6 +29,19 @@ const app = express();
 app.use(corsMiddleware);
 app.use(express.json({ limit: "1mb" }));
 app.use(requestLogger);
+
+// Global middleware to sync memory store to MongoDB on mutations
+app.use((req, res, next) => {
+  if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+    const originalJson = res.json;
+    res.json = function(body) {
+      syncStoreToDB().catch(console.error).finally(() => {
+        originalJson.call(this, body);
+      });
+    };
+  }
+  next();
+});
 
 // API routes
 app.use("/api/community", communityRoutes);

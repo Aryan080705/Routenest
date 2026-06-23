@@ -902,6 +902,7 @@ const addMockData = () => {
 // addMockData();
 
 const getStore = () => store;
+const setStore = (newData) => { store = newData; };
 
 /** Reset to seed data (useful for testing). */
 const resetStore = () => {
@@ -915,4 +916,4 @@ const nextId = (collection) =>
     ? Math.max(...collection.map((item) => item.id)) + 1
     : 1;
 
-module.exports = { getStore, resetStore, nextId };
+module.exports = { getStore, setStore, resetStore, nextId };
