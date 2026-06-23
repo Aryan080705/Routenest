@@ -218,6 +218,18 @@ router.post("/mark-read", (req, res) => {
   res.json({ message: `${marked} marked as read`, markedCount: marked });
 });
 
+router.post("/mark-unread", (req, res) => {
+  const { notificationIds, userId } = req.body || {};
+  const store = getStore();
+  let marked = 0;
+  (notificationIds || []).forEach((id) => {
+    const it = store.notificationHistory.find((n) => n.id === parseInt(id) && n.userId === parseInt(userId) && n.read);
+    if (it) { it.read = false; it.readAt = null; marked++; }
+  });
+  emitUnread(req, parseInt(userId));
+  res.json({ message: `${marked} marked as unread`, markedCount: marked });
+});
+
 router.post("/mark-all-read", (req, res) => {
   const { userId } = req.body || {};
   const store = getStore();

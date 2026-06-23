@@ -960,7 +960,14 @@ function NotificationsPage() {
   }, []);
 
   const markAll = async () => { await api.post("/api/notifications/mark-all-read", { userId: user.id }); load(); };
-  const markRead = async (n) => { if (n.read) return; await api.post("/api/notifications/mark-read", { userId: user.id, notificationIds: [n.id] }); load(); };
+  const toggleRead = async (n) => {
+    if (n.read) {
+      await api.post("/api/notifications/mark-unread", { userId: user.id, notificationIds: [n.id] });
+    } else {
+      await api.post("/api/notifications/mark-read", { userId: user.id, notificationIds: [n.id] });
+    }
+    load();
+  };
   const savePrefs = async () => { await api.put(`/api/notifications/preferences/${user.id}`, prefs); toast(t("success.prefs")); };
 
   const enablePush = async () => {
@@ -1032,7 +1039,7 @@ function NotificationsPage() {
       <div className="split">
         <div className="card">
           {items.length === 0 ? <div className="empty">{t("notifications.empty")}</div> : items.map(n => (
-            <div key={n.id} className={`notif-item ${n.read ? "" : "unread"}`} onClick={() => markRead(n)} data-testid={`notif-${n.id}`}>
+            <div key={n.id} className={`notif-item ${n.read ? "" : "unread"}`} onClick={() => toggleRead(n)} data-testid={`notif-${n.id}`}>
               <div className={`notif-dot ${n.read ? "read" : ""}`} />
               <div className="notif-body">
                 <div className="notif-title">{n.title}</div>
