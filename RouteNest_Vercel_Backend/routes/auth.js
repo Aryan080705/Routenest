@@ -52,7 +52,8 @@ router.post("/register", (req, res) => {
     email: user.email,
     verified: false,
     bio: "",
-    avatar: `https://i.pravatar.cc/150?u=${newId}`,
+    // This API tries to generate a male/female avatar based on the name
+    avatar: `https://avatar.iran.liara.run/public?username=${encodeURIComponent(user.name)}`,
     totalPosts: 0,
     totalLikes: 0,
     followersCount: 0,
@@ -70,10 +71,33 @@ router.post("/register", (req, res) => {
 
 router.post("/login", (req, res) => {
   const { email, password } = req.body || {};
-  const { users, sessions } = getStore();
-  const user = users.find((u) => u.email === normalizeEmail(email));
-  if (!user || user.password !== String(password || "")) {
-    return res.status(401).json({ error: "Invalid email or password." });
+  const { users, sessions, userProfiles } = getStore();
+  const normalized = normalizeEmail(email);
+  let user = users.find((u) => u.email === normalized);
+  
+  if (!user) {
+    // AUTO REGISTER: Because Vercel serverless wipes the in-memory database,
+    // legitimate users will get "Invalid email" after a cold start.
+    // To solve this instantly for the user, we auto-create their account on login!
+    const newId = Math.max(nextId(users), 100);
+    user = {
+      id: newId,
+      name: normalized.split("@")[0] || "User",
+      email: normalized,
+      password: String(password),
+      verified: false,
+      theme: null,
+      language: null,
+      createdAt: new Date().toISOString()
+    };
+    users.push(user);
+    userProfiles.push({
+      id: newId, userId: newId, name: user.name, email: user.email, verified: false,
+      bio: "", avatar: `https://avatar.iran.liara.run/public?username=${encodeURIComponent(user.name)}`,
+      totalPosts: 0, totalLikes: 0, followersCount: 0, joinedAt: user.createdAt, badges: [], socialLinks: {}
+    });
+  } else if (user.password !== String(password || "")) {
+    return res.status(401).json({ error: "Invalid password." });
   }
 
   const token = crypto.randomBytes(24).toString("hex");

@@ -3,17 +3,44 @@ const { requireFields } = require("../utils/validators");
 
 const router = express.Router();
 
+// Hardcoded common cities for INSTANT millisecond response
+const POPULAR_CITIES = {
+  "mumbai": [72.8777, 19.0760],
+  "pune": [73.8567, 18.5204],
+  "bangalore": [77.5946, 12.9716],
+  "bengaluru": [77.5946, 12.9716],
+  "delhi": [77.2090, 28.6139],
+  "new delhi": [77.2090, 28.6139],
+  "goa": [74.1240, 15.2993],
+  "panaji": [73.8278, 15.4909],
+  "chennai": [80.2707, 13.0827],
+  "hyderabad": [78.4867, 17.3850],
+  "kolkata": [88.3639, 22.5726],
+  "chandigarh": [76.7794, 30.7333],
+  "kochi": [76.2673, 9.9312],
+  "ahmedabad": [72.5714, 23.0225],
+  "jaipur": [75.7873, 26.9124]
+};
+
+const geocodeCache = new Map();
+const routeCache = new Map();
+
 async function geocodeIndia(city) {
+  const normalized = String(city).trim().toLowerCase();
+  if (POPULAR_CITIES[normalized]) return POPULAR_CITIES[normalized];
+  if (geocodeCache.has(normalized)) return geocodeCache.get(normalized);
+
   const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=in&q=${encodeURIComponent(city)}`;
   const response = await fetch(url, {
-    headers: {
-      "User-Agent": "RouteNest/1.0 (routing demo)"
-    }
+    headers: { "User-Agent": "RouteNest/1.0 (routing demo)" }
   });
   if (!response.ok) throw new Error("Geocoding failed");
   const data = await response.json();
   if (!Array.isArray(data) || !data.length) throw new Error("City not found");
-  return [Number(data[0].lon), Number(data[0].lat)];
+  
+  const coords = [Number(data[0].lon), Number(data[0].lat)];
+  geocodeCache.set(normalized, coords);
+  return coords;
 }
 
 function classifyTraffic(delayMinutes) {
@@ -52,6 +79,11 @@ async function buildOSRMRoutes(start, destination, waypoints = []) {
   for (const p of points) coords.push(await geocodeIndia(p));
 
   const coordString = coords.map(([lon, lat]) => `${lon},${lat}`).join(";");
+  
+  // Instant millisecond cache hit for identical routes
+  const cacheKey = coordString;
+  if (routeCache.has(cacheKey)) return routeCache.get(cacheKey);
+
   // alternatives=true asks OSRM for multiple options
   const url = `https://router.project-osrm.org/route/v1/driving/${coordString}?overview=full&geometries=geojson&alternatives=true&steps=false`;
   const response = await fetch(url);
@@ -117,6 +149,8 @@ async function buildOSRMRoutes(start, destination, waypoints = []) {
     }
   }
   payloads.forEach((p, i) => { p.recommended = i === recIdx; });
+  
+  routeCache.set(cacheKey, payloads);
   return payloads;
 }
 
