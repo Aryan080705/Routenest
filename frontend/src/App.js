@@ -38,7 +38,7 @@ function Header() {
     if (!user) { setUnread(0); return; }
     const load = () => api.get(`/api/notifications/unread-count/${user.id}`).then(r => setUnread(r.data.unreadCount)).catch(() => {});
     load();
-    const id = setInterval(load, 15000);
+    const id = setInterval(load, 60000); // reduced from 15s → 60s for mobile performance
     return () => clearInterval(id);
   }, [user]);
 
@@ -245,7 +245,7 @@ function PlannerPage() {
 
   useEffect(() => {
     if (!autoRefresh || routes.length === 0) return;
-    const id = setInterval(refreshSilent, 60000);
+    const id = setInterval(refreshSilent, 180000); // reduced from 60s → 3min for mobile performance
     return () => clearInterval(id);
   }, [autoRefresh, routes.length, refreshSilent]);
 
@@ -287,17 +287,17 @@ function PlannerPage() {
         <tbody>
           {items.map((r) => (
             <tr key={r.id} className={`compare-row ${r.id === activeId ? "active" : ""} ${r.recommended ? "recommended" : ""}`} onClick={() => onPick(r.id)} data-testid={`compare-row-${r.id}`}>
-              <td>
+              <td data-label={t("planner.compare")}>
                 <div className="row" style={{ gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                   <strong>{r.name}</strong>
                   {r.recommended && <span className="tag tag-rec" data-testid={`compare-rec-${r.id}`}>{t("planner.recommended")}</span>}
                   {r.highTraffic && <span className="tag tag-high" data-testid={`compare-warn-${r.id}`}>⚠ High Traffic</span>}
                 </div>
               </td>
-              <td>{r.distanceKm} km</td>
-              <td>{r.etaMinutes} min</td>
-              <td><span className={`tag ${trafficTag(r)}`} data-testid={`compare-cong-${r.id}`}>{r.congestion}</span></td>
-              <td>+{r.delayMinutes} min</td>
+              <td data-label={t("planner.distance")}>{r.distanceKm} km</td>
+              <td data-label={t("planner.eta")}>{r.etaMinutes} min</td>
+              <td data-label={t("planner.congestion")}><span className={`tag ${trafficTag(r)}`} data-testid={`compare-cong-${r.id}`}>{r.congestion}</span></td>
+              <td data-label={t("planner.delay")}>+{r.delayMinutes} min</td>
               <td>
                 <button type="button" className={`btn ${r.id === activeId ? "btn-accent" : ""}`} onClick={(e) => { e.stopPropagation(); onPick(r.id); }} data-testid={`compare-select-${r.id}`} style={{ padding: "6px 14px", fontSize: 13 }}>
                   {r.id === activeId ? "✓" : "Select"}
@@ -582,7 +582,7 @@ function CommunityPage() {
               <>
                 <h3>{p.title}</h3>
                 <p style={{ color: "var(--ink-soft)" }}>{p.body}</p>
-                {p.photo && <img src={p.photo} alt="" className="post-photo" />}
+                {p.photo && <img src={p.photo} alt="" className="post-photo" loading="lazy" decoding="async" />}
               </>
             )}
             <div className="post-actions">
@@ -1078,7 +1078,7 @@ function ProfilePage() {
     <div className="container">
       <div className="card">
         <div className="row" style={{ gap: 20 }}>
-          <img src={profile.avatar} alt="" className="avatar" style={{ width: 88, height: 88 }} />
+          <img src={profile.avatar} alt="" className="avatar" style={{ width: 88, height: 88 }} loading="lazy" decoding="async" />
           <div>
             <h1 style={{ margin: 0, fontFamily: "Fraunces, serif" }}>
               {profile.name}{" "}
