@@ -154,5 +154,41 @@
   },
   "common": {
     "save": "Guardar"
+  },
+  "forumsList": {
+    "routes": {
+      "title": "Discusión de Rutas",
+      "description": "Comparte y discute rutas de autobús por la India",
+      "topics": {
+        "north-india": { "title": "Rutas del Norte", "description": "Rutas de Delhi, Punjab, Himachal Pradesh" },
+        "south-india": { "title": "Rutas del Sur", "description": "Rutas de Karnataka, Tamil Nadu, Andhra Pradesh" },
+        "western": { "title": "Rutas del Oeste", "description": "Rutas de Maharashtra, Gujarat, Goa" }
+      }
+    },
+    "travel-tips": {
+      "title": "Consejos de Viaje",
+      "description": "Obtén consejos de viajeros experimentados",
+      "topics": {
+        "safety": { "title": "Seguridad", "description": "Viajes en solitario, mujeres viajeras, consejos de seguridad" },
+        "budget": { "title": "Viaje Económico", "description": "Consejos económicos, ofertas, trucos de viaje" }
+      }
+    },
+    "destinations": {
+      "title": "Guías de Destinos",
+      "description": "Explora joyas ocultas y destinos populares",
+      "topics": {
+        "beaches": { "title": "Playas", "description": "Playas de Goa, Kerala, Karnataka" },
+        "hills": { "title": "Estaciones de Montaña", "description": "Himalayas, Ghats Occidentales, Nilgiris" }
+      }
+    },
+    "bus-reviews": {
+      "title": "Reseñas de Autobuses",
+      "description": "Califica y reseña operadores de autobuses, servicios y comodidades",
+      "topics": {
+        "operator-reviews": { "title": "Reseñas de Operadores", "description": "Reseña operadores como GSRTC, MSRTC, RedBus, VRL, etc." },
+        "amenities": { "title": "Comodidades del Autobús", "description": "WiFi, puertos de carga, calidad de literas, reseñas de AC" },
+        "complaints": { "title": "Rincón de Quejas", "description": "Reporta malas experiencias y advierte a otros viajeros" }
+      }
+    }
   }
 }

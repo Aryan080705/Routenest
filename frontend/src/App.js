@@ -624,8 +624,8 @@ function ForumsPanel() {
           <div className="row" style={{ gap: 12, alignItems: "center", marginBottom: 4 }}>
             <span style={{ fontSize: 28 }}>{activeForum.emoji || FALLBACK_EMOJI[activeForum.slug] || "💬"}</span>
             <div>
-              <h2 style={{ margin: 0, fontFamily: "Fraunces, serif" }}>{activeForum.title}</h2>
-              <div className="muted" style={{ fontSize: 13 }}>{activeForum.description}</div>
+              <h2 style={{ margin: 0, fontFamily: "Fraunces, serif" }}>{t(`forumsList.${activeForum.slug}.title`, activeForum.title)}</h2>
+              <div className="muted" style={{ fontSize: 13 }}>{t(`forumsList.${activeForum.slug}.description`, activeForum.description)}</div>
             </div>
           </div>
           <div style={{ marginTop: 18 }}>
@@ -633,7 +633,7 @@ function ForumsPanel() {
               <div className="empty">{t("forums.noTopics")}</div>
             ) : activeForum.topics.map((tp) => (
               <div key={tp.id} data-testid={`forum-topic-${tp.slug}`} style={{ padding: "14px 0", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", gap: 16, alignItems: "center" }}>
-                <div><strong>{tp.title}</strong><div className="muted" style={{ fontSize: 13 }}>{tp.description}</div></div>
+                <div><strong>{t(`forumsList.${activeForum.slug}.topics.${tp.slug}.title`, tp.title)}</strong><div className="muted" style={{ fontSize: 13 }}>{t(`forumsList.${activeForum.slug}.topics.${tp.slug}.description`, tp.description)}</div></div>
                 <span className="post-topic">{tp.postsCount || 0} {t("forums.posts")}</span>
               </div>
             ))}
@@ -652,8 +652,8 @@ function ForumsPanel() {
           onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "var(--border)"; }}
         >
           <div style={{ fontSize: 40, lineHeight: 1 }}>{f.emoji || FALLBACK_EMOJI[f.slug] || "💬"}</div>
-          <h3 style={{ marginTop: 12 }}>{f.title}</h3>
-          <p>{f.description}</p>
+          <h3 style={{ marginTop: 12 }}>{t(`forumsList.${f.slug}.title`, f.title)}</h3>
+          <p>{t(`forumsList.${f.slug}.description`, f.description)}</p>
           <div className="muted" style={{ fontSize: 13, marginTop: 8 }}><strong style={{ color: "var(--accent)" }}>{f.topicCount ?? (f.topics || []).length}</strong>{" "}{t("forums.topics")}</div>
         </button>
       ))}

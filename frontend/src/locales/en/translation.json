@@ -154,5 +154,41 @@
   },
   "common": {
     "save": "Save"
+  },
+  "forumsList": {
+    "routes": {
+      "title": "Routes Discussion",
+      "description": "Share and discuss bus routes across India",
+      "topics": {
+        "north-india": { "title": "North India Routes", "description": "Delhi, Punjab, Himachal Pradesh routes" },
+        "south-india": { "title": "South India Routes", "description": "Karnataka, Tamil Nadu, Andhra Pradesh routes" },
+        "western": { "title": "Western Routes", "description": "Maharashtra, Gujarat, Goa routes" }
+      }
+    },
+    "travel-tips": {
+      "title": "Travel Tips & Advice",
+      "description": "Get advice from experienced travelers",
+      "topics": {
+        "safety": { "title": "Safety & Security", "description": "Solo travel safety, women travelers, safety tips" },
+        "budget": { "title": "Budget Travel", "description": "Budget tips, deals, travel hacks" }
+      }
+    },
+    "destinations": {
+      "title": "Destination Guides",
+      "description": "Explore hidden gems and popular destinations",
+      "topics": {
+        "beaches": { "title": "Beach Destinations", "description": "Goa, Kerala, Karnataka beaches" },
+        "hills": { "title": "Hill Stations", "description": "Himalayas, Western Ghats, Nilgiris" }
+      }
+    },
+    "bus-reviews": {
+      "title": "Bus Reviews",
+      "description": "Rate and review bus operators, services, and amenities",
+      "topics": {
+        "operator-reviews": { "title": "Operator Reviews", "description": "Review bus operators like GSRTC, MSRTC, RedBus, VRL etc." },
+        "amenities": { "title": "Bus Amenities", "description": "WiFi, charging ports, sleeper quality, AC reviews" },
+        "complaints": { "title": "Complaint Corner", "description": "Report bad experiences and warn fellow travelers" }
+      }
+    }
   }
 }
