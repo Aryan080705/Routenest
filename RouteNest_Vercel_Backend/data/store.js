@@ -654,54 +654,9 @@ const initialData = () => ({
 let store = initialData();
 
 const addMockData = () => {
-  if (store.posts.length < 10) {
-    for (let i = 4; i <= 15; i++) {
-      const likes = Array.from({length: Math.floor(Math.random() * 50) + 15}, (_, j) => j+1);
-      const likedAt = {};
-      likes.forEach(id => {
-        likedAt[id] = new Date(Date.now() - Math.random() * 7 * 24 * 3600 * 1000).toISOString();
-      });
-      store.posts.push({
-        id: i,
-        authorId: (i % 3) + 1,
-        author: ["Aarav Mehta", "Maya Shah", "Riya Kapoor"][i % 3],
-        verified: true,
-        topic: ["Routes", "Travel Advice", "Destinations"][i % 3],
-        title: ["Night journey through Western Ghats", "Must carry items for solo travelers", "Hidden dhaba on the highway", "Best time to travel to Goa", "My worst bus experience and how to avoid it", "Scenery was absolutely breathtaking!"][i % 6] + " #" + i,
-        body: `This is a detailed travel post detailing a beautiful bus journey experience. Always remember to carry water and offline maps. Highly recommended route! (Demo post ${i})`,
-        photo: i % 3 === 0 ? "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=900&q=80" : "",
-        likes,
-        likedAt,
-        comments: [
-          { id: 1, authorId: 1, author: "Aarav Mehta", verified: true, text: "Awesome tip!", likes: 2, timestamp: new Date().toISOString() },
-          { id: 2, authorId: 2, author: "Maya Shah", verified: true, text: "Thanks for sharing this.", likes: 5, timestamp: new Date().toISOString() }
-        ],
-        reports: [],
-        shares: { twitter: 1, facebook: 0, instagram: 5, whatsapp: 2 },
-        removed: false,
-        createdAt: new Date(Date.now() - i * 3600 * 1000).toISOString()
-      });
-    }
-  }
-  if (store.reviews.length < 10) {
-    for (let i = 3; i <= 15; i++) {
-      store.reviews.push({
-        id: i,
-        route: ["Mumbai to Pune", "Delhi to Jaipur", "Bangalore to Goa", "Chennai to Madurai"][i % 4],
-        user: ["Aarav Mehta", "Maya Shah", "Riya Kapoor"][i % 3],
-        verified: true,
-        completedJourney: true,
-        rating: 3 + (i % 3),
-        text: `This journey was fantastic. Review #${i} adding some more words to make sure it surpasses the minimum thirty characters length requirement.`,
-        helpful: Math.floor(Math.random() * 25) + 5,
-        reports: 0,
-        hidden: false,
-        createdAt: new Date(Date.now() - i * 86400 * 1000).toISOString()
-      });
-    }
-  }
+  // Mock data disabled to prevent showing dummy posts and reviews
 };
-addMockData();
+// addMockData();
 
 const getStore = () => store;
 
