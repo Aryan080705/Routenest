@@ -209,8 +209,22 @@ function PlannerPage() {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const prevRecRef = React.useRef(null);
 
+  // Load saved routes: try API first, fall back to localStorage
   const loadSaved = useCallback(() => {
-    if (!user) return; api.get(`/api/planner/saved/${user.id}`).then(r => setSaved(r.data)).catch(() => {});
+    if (!user) return;
+    const lsKey = `routenest_saved_${user.id}`;
+    // Immediately show locally cached routes
+    try {
+      const local = JSON.parse(localStorage.getItem(lsKey) || "[]");
+      setSaved(local);
+    } catch {}
+    // Then sync from server
+    api.get(`/api/planner/saved/${user.id}`)
+      .then(r => {
+        setSaved(r.data);
+        try { localStorage.setItem(lsKey, JSON.stringify(r.data)); } catch {}
+      })
+      .catch(() => {});
   }, [user]);
   useEffect(() => { loadSaved(); }, [loadSaved]);
 
@@ -254,10 +268,29 @@ function PlannerPage() {
     const active = routes.find(r => r.id === activeId); if (!active) return;
     const name = prompt(t("planner.saveAs"), `${start} → ${destination}`);
     if (!name) return;
-    try { await api.post(`/api/planner/saved/${user.id}`, { name, start, destination, waypoints, route: active }); toast(t("success.saved")); loadSaved(); }
-    catch { toast(t("errors.network"), "error"); }
+    const lsKey = `routenest_saved_${user.id}`;
+    // Optimistically save to localStorage first
+    const newEntry = { id: Date.now(), name, start, destination, waypoints, route: active, savedAt: new Date().toISOString() };
+    const current = (() => { try { return JSON.parse(localStorage.getItem(lsKey) || "[]"); } catch { return []; } })();
+    const updated = [...current, newEntry];
+    try { localStorage.setItem(lsKey, JSON.stringify(updated)); } catch {}
+    setSaved(updated);
+    toast(t("success.saved"));
+    // Also try saving to server in background
+    api.post(`/api/planner/saved/${user.id}`, { name, start, destination, waypoints, route: active })
+      .then(() => loadSaved())
+      .catch(() => {});
   };
-  const removeSaved = async (id) => { await api.delete(`/api/planner/saved/${user.id}/${id}`); loadSaved(); };
+  const removeSaved = async (id) => {
+    if (!user) return;
+    const lsKey = `routenest_saved_${user.id}`;
+    // Remove locally first (instant feedback)
+    const filtered = saved.filter(s => s.id !== id);
+    setSaved(filtered);
+    try { localStorage.setItem(lsKey, JSON.stringify(filtered)); } catch {}
+    // Also try removing from server
+    api.delete(`/api/planner/saved/${user.id}/${id}`).catch(() => {});
+  };
 
   const trafficTag = (c) => c.delayMinutes <= 8 ? "tag-low" : c.delayMinutes <= 22 ? "tag-mid" : "tag-high";
   const center = useMemo(() => routes[0]?.path?.[0] || [20.5937, 78.9629], [routes]);

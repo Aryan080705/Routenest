@@ -142,29 +142,30 @@ router.post("/plan", async (req, res) => {
 
 /* ── Saved Routes ────────────────────────────────────────── */
 
-// In-memory saved routes store
-const savedRoutesStore = {};
-
 /* GET /api/planner/saved/:userId — get all saved routes for user */
 router.get("/saved/:userId", (req, res) => {
-  const userId = req.params.userId;
-  const saved = savedRoutesStore[userId] || [];
-  res.json(saved);
+  const { getStore } = require("../data/store");
+  const userId = String(req.params.userId);
+  const savedRoutes = getStore().savedRoutes || {};
+  res.json(savedRoutes[userId] || []);
 });
 
 /* POST /api/planner/saved/:userId — save a route */
 router.post("/saved/:userId", (req, res) => {
-  const userId = req.params.userId;
+  const { getStore } = require("../data/store");
+  const store = getStore();
+  if (!store.savedRoutes) store.savedRoutes = {};
+
+  const userId = String(req.params.userId);
   const { name, start, destination, waypoints, route } = req.body || {};
   if (!name || !route) {
     return res.status(400).json({ error: "name and route are required." });
   }
 
-  if (!savedRoutesStore[userId]) savedRoutesStore[userId] = [];
+  if (!store.savedRoutes[userId]) store.savedRoutes[userId] = [];
+  const list = store.savedRoutes[userId];
   const saved = {
-    id: savedRoutesStore[userId].length > 0
-      ? Math.max(...savedRoutesStore[userId].map((s) => s.id)) + 1
-      : 1,
+    id: list.length > 0 ? Math.max(...list.map((s) => s.id)) + 1 : 1,
     name,
     start: start || "",
     destination: destination || "",
@@ -172,22 +173,25 @@ router.post("/saved/:userId", (req, res) => {
     route,
     savedAt: new Date().toISOString(),
   };
-  savedRoutesStore[userId].push(saved);
+  list.push(saved);
   res.status(201).json(saved);
 });
 
 /* DELETE /api/planner/saved/:userId/:routeId — remove saved route */
 router.delete("/saved/:userId/:routeId", (req, res) => {
-  const userId = req.params.userId;
+  const { getStore } = require("../data/store");
+  const store = getStore();
+  const savedRoutes = store.savedRoutes || {};
+  const userId = String(req.params.userId);
   const routeId = Number(req.params.routeId);
-  if (!savedRoutesStore[userId]) {
+  if (!savedRoutes[userId]) {
     return res.status(404).json({ error: "No saved routes found." });
   }
-  const idx = savedRoutesStore[userId].findIndex((s) => s.id === routeId);
+  const idx = savedRoutes[userId].findIndex((s) => s.id === routeId);
   if (idx === -1) {
     return res.status(404).json({ error: "Saved route not found." });
   }
-  savedRoutesStore[userId].splice(idx, 1);
+  savedRoutes[userId].splice(idx, 1);
   res.json({ message: "Saved route removed." });
 });
 

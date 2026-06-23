@@ -888,7 +888,8 @@ const initialData = () => ({
 
   userPreferences: {},
   users: [],
-  sessions: {}
+  sessions: {},
+  savedRoutes: {}
 });
 
 /* ── live store ─────────────────────────────────────────────── */
