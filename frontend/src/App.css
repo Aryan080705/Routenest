@@ -67,6 +67,10 @@ input, textarea, select { font-family: inherit; }
   .hdr-right { flex: 1; justify-content: flex-end; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 4px; }
   .hdr-right::-webkit-scrollbar { display: none; }
 }
+@media (max-width: 480px) {
+  .hdr-right { flex: 100%; width: 100%; justify-content: flex-start; flex-wrap: wrap; padding-bottom: 0; overflow-x: visible; }
+  .hdr-row { gap: 12px; }
+}
 .icon-btn { width: 38px; height: 38px; border-radius: 12px; background: var(--bg-soft); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; color: var(--ink); transition: transform .15s ease; }
 .icon-btn:hover { transform: translateY(-1px); }
 .badge-count { position: absolute; top: -4px; right: -4px; background: var(--accent); color: white; font-size: 10px; padding: 2px 5px; border-radius: 999px; font-weight: 700; }
