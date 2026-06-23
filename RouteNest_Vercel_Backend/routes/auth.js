@@ -52,8 +52,8 @@ router.post("/register", (req, res) => {
     email: user.email,
     verified: true,
     bio: "",
-    // This API tries to generate a male/female avatar based on the name
-    avatar: `https://avatar.iran.liara.run/public?username=${encodeURIComponent(user.name)}`,
+    // Fallback to initials avatar to avoid incorrect boy/girl photos
+    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff`,
     totalPosts: 0,
     totalLikes: 0,
     followersCount: 0,
@@ -93,7 +93,7 @@ router.post("/login", (req, res) => {
     users.push(user);
     userProfiles.push({
       id: newId, userId: newId, name: user.name, email: user.email, verified: true,
-      bio: "", avatar: `https://avatar.iran.liara.run/public?username=${encodeURIComponent(user.name)}`,
+      bio: "", avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff`,
       totalPosts: 0, totalLikes: 0, followersCount: 0, joinedAt: user.createdAt, badges: [], socialLinks: {}
     });
   } else if (user.password !== String(password || "")) {
