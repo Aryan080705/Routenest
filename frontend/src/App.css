@@ -44,6 +44,10 @@ input, textarea, select { font-family: inherit; }
 .shell { min-height: 100vh; display: flex; flex-direction: column; }
 .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 .main { flex: 1; padding: 32px 0 80px; }
+@media (max-width: 600px) {
+  .container { padding: 0 16px; }
+  .main { padding: 16px 0 60px; }
+}
 
 /* Header */
 .hdr { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--border); }
@@ -78,6 +82,9 @@ input, textarea, select { font-family: inherit; }
 
 /* Cards / Forms */
 .card { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 18px; padding: 24px; box-shadow: var(--shadow); }
+@media (max-width: 600px) {
+  .card { padding: 16px; border-radius: 14px; }
+}
 .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
 .field > label { font-size: 13px; color: var(--ink-soft); font-weight: 500; }
 .input, textarea.input, select.input { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; color: var(--ink); font-size: 14px; transition: border .15s; }
@@ -98,9 +105,16 @@ textarea.input { resize: vertical; min-height: 90px; }
 /* Features */
 .section { padding: 48px 0; }
 .section h2 { font-family: 'Fraunces', serif; font-size: 36px; margin: 0 0 28px; letter-spacing: -.02em; }
+@media (max-width: 600px) {
+  .section { padding: 32px 0; }
+  .section h2 { font-size: 28px; margin: 0 0 20px; }
+}
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 @media (max-width: 800px) { .grid-3 { grid-template-columns: 1fr; } }
 .feat { padding: 28px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 18px; }
+@media (max-width: 600px) {
+  .feat { padding: 20px; border-radius: 14px; }
+}
 .feat-num { font-family: 'Fraunces', serif; font-size: 38px; color: var(--accent); }
 .feat h3 { margin: 8px 0 6px; font-size: 18px; }
 .feat p { color: var(--ink-soft); margin: 0; line-height: 1.55; font-size: 14px; }
@@ -108,6 +122,10 @@ textarea.input { resize: vertical; min-height: 90px; }
 /* Pages */
 .page-title { font-family: 'Fraunces', serif; font-size: 44px; margin: 0 0 8px; letter-spacing: -.02em; }
 .page-sub { color: var(--ink-soft); margin: 0 0 28px; font-size: 16px; }
+@media (max-width: 600px) {
+  .page-title { font-size: 32px; }
+  .page-sub { font-size: 14px; margin: 0 0 20px; }
+}
 
 /* Planner */
 .planner-grid { display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start; }
