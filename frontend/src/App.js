@@ -797,7 +797,8 @@ function CommunityPage() {
               <button className="action-btn" data-testid={`comment-count-${p.id}`}>💬 {p.commentCount}</button>
               <button className="action-btn" onClick={() => share(p, "native")} data-testid={`share-native-${p.id}`}>↗ Share</button>
               <button className="action-btn" onClick={() => share(p, "whatsapp")} data-testid={`share-wa-${p.id}`}>↗ WhatsApp</button>
-              <button className="action-btn" onClick={() => share(p, "twitter")} data-testid={`share-tw-${p.id}`}>↗ Twitter</button>
+              <button className="action-btn" onClick={() => share(p, "facebook")} data-testid={`share-fb-${p.id}`}>↗ Facebook</button>
+              <button className="action-btn" onClick={() => { navigator.clipboard.writeText(window.location.origin + `/community#post-${p.id}`); toast("Link copied!"); }} data-testid={`share-copy-${p.id}`}>📋 Copy Link</button>
               {user && <button className="action-btn" onClick={() => report(p)} data-testid={`report-${p.id}`}>⚑ {t("community.report")}</button>}
               {user && p.authorId === user.id && editingId !== p.id && !isPast24h(p) && <button className="action-btn" onClick={() => startEdit(p)} data-testid={`edit-${p.id}`}>✎ {t("reviews.edit")}</button>}
               {user && p.authorId === user.id && isPast24h(p) && <span className="action-btn" style={{ opacity: 0.4, cursor: "not-allowed" }} title={t("common.editLockedTitle")}>🔒 {t("common.editLocked")}</span>}
@@ -1351,7 +1352,11 @@ function ProfilePage() {
         <div className="card" data-testid="profile-pane-posts">
           {profile.recentPosts?.length === 0 ? <div className="empty">{t("profile.noPosts")}</div> : profile.recentPosts?.map(p => (
             <div key={p.id} style={{ padding: "10px 0", borderTop: "1px solid var(--border)" }} data-testid={`profile-post-${p.id}`}>
-              <strong>{p.title}</strong><div className="muted" style={{ fontSize: 13 }}>{p.body.slice(0, 120)}…</div>
+              <div className="row" style={{ alignItems: "center", gap: 8 }}>
+                <strong>{p.title}</strong>
+                {(p.likeCount > 5 || p.commentCount > 2) && <span className="tag tag-high" style={{ fontSize: 11, padding: "2px 6px" }}>🔥 Popular</span>}
+              </div>
+              <div className="muted" style={{ fontSize: 13, marginTop: 4 }}>{p.body.slice(0, 120)}…</div>
             </div>
           ))}
         </div>
