@@ -1325,6 +1325,36 @@ function ProfilePage() {
           ))}
         </div>
       )}
+
+      {tab === "preferences" && (
+        <div className="card" data-testid="profile-pane-preferences">
+          <h3 style={{ marginTop: 0 }}>Notification Preferences</h3>
+          <p className="muted" style={{ marginBottom: 16 }}>Manage how you receive updates and alerts.</p>
+          <div className="col" style={{ gap: 16 }}>
+            <label className="checkbox" style={{ alignItems: "flex-start" }}>
+              <input type="checkbox" checked={prefs.email} onChange={e => savePrefs({ ...prefs, email: e.target.checked })} style={{ marginTop: 4 }} />
+              <div>
+                <strong style={{ display: "block" }}>Email Notifications</strong>
+                <span className="muted" style={{ fontSize: 13 }}>Receive daily summaries and important alerts via email.</span>
+              </div>
+            </label>
+            <label className="checkbox" style={{ alignItems: "flex-start" }}>
+              <input type="checkbox" checked={prefs.push} onChange={e => savePrefs({ ...prefs, push: e.target.checked })} style={{ marginTop: 4 }} />
+              <div>
+                <strong style={{ display: "block" }}>Push Notifications</strong>
+                <span className="muted" style={{ fontSize: 13 }}>Instant alerts on your device for journey updates.</span>
+              </div>
+            </label>
+            <label className="checkbox" style={{ alignItems: "flex-start" }}>
+              <input type="checkbox" checked={prefs.promos} onChange={e => savePrefs({ ...prefs, promos: e.target.checked })} style={{ marginTop: 4 }} />
+              <div>
+                <strong style={{ display: "block" }}>Promotional Offers</strong>
+                <span className="muted" style={{ fontSize: 13 }}>Receive exclusive deals and community highlights.</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
