@@ -152,9 +152,45 @@ function Header() {
   );
 }
 
+// ─── HomeAuth ───
+function HomeAuth() {
+  const { t } = useI18n(); const { login, register } = useAuth(); const nav = useNavigate(); const toast = useToast();
+  const [mode, setMode] = useState("login");
+  const [name, setName] = useState(""); const [email, setEmail] = useState(""); const [pw, setPw] = useState(""); const [busy, setBusy] = useState(false);
+  const submit = async (e) => {
+    e.preventDefault();
+    if (mode === "register" && pw.length < 6) { toast(t("errors.short"), "error"); return; }
+    setBusy(true);
+    try { 
+      if (mode === "login") { await login(email, pw); } 
+      else { await register(name, email, pw); }
+      toast(t("success.saved")); nav("/"); 
+    }
+    catch (err) { toast(err.response?.data?.detail || err.response?.data?.error || t("errors.network"), "error"); }
+    finally { setBusy(false); }
+  };
+  return (
+    <div className="card" style={{ width: "90%", maxWidth: 380, background: "var(--bg)", textAlign: "left", padding: "24px" }}>
+      <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+        <button type="button" className={`btn ${mode === "login" ? "btn-primary" : "btn-ghost"}`} style={{ flex: 1 }} onClick={() => setMode("login")}>{t("auth.login")}</button>
+        <button type="button" className={`btn ${mode === "register" ? "btn-primary" : "btn-ghost"}`} style={{ flex: 1 }} onClick={() => setMode("register")}>{t("auth.register")}</button>
+      </div>
+      <form onSubmit={submit}>
+        {mode === "register" && (
+          <div className="field"><label>{t("auth.name")}</label><input className="input" required value={name} onChange={e => setName(e.target.value)} /></div>
+        )}
+        <div className="field"><label>{t("auth.email")}</label><input className="input" type="email" required value={email} onChange={e => setEmail(e.target.value)} /></div>
+        <div className="field"><label>{t("auth.password")}</label><input className="input" type="password" required value={pw} onChange={e => setPw(e.target.value)} /></div>
+        <button className="btn btn-primary" type="submit" disabled={busy} style={{ width: "100%", marginTop: 6 }}>{busy ? <span className="spinner" /> : (mode === "login" ? t("auth.login") : t("auth.register"))}</button>
+      </form>
+    </div>
+  );
+}
+
 // ─── Home ───
 function Home() {
   const { t } = useI18n();
+  const { user } = useAuth();
   return (
     <>
       <section className="hero container">
@@ -168,14 +204,20 @@ function Home() {
         </div>
         <div className="hero-art" style={{ background: "linear-gradient(135deg, color-mix(in srgb, var(--primary) 15%, transparent), transparent)" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%", height: "100%", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
-            <div style={{ padding: "20px", background: "var(--bg)", borderRadius: 16, boxShadow: "0 10px 30px rgba(0,0,0,0.1)", marginBottom: 12, width: "80%" }}>
-              <h2 style={{ fontSize: "2.5rem", margin: 0, color: "var(--primary)" }}>50K+</h2>
-              <p style={{ margin: 0, fontWeight: 600, color: "var(--muted)" }}>{t("home.activeTravelers")}</p>
-            </div>
-            <div style={{ padding: "20px", background: "var(--bg)", borderRadius: 16, boxShadow: "0 10px 30px rgba(0,0,0,0.1)", width: "80%" }}>
-              <h2 style={{ fontSize: "2.5rem", margin: 0, color: "var(--accent)" }}>10K+</h2>
-              <p style={{ margin: 0, fontWeight: 600, color: "var(--muted)" }}>{t("home.routesPlanned")}</p>
-            </div>
+            {user ? (
+              <>
+                <div style={{ padding: "20px", background: "var(--bg)", borderRadius: 16, boxShadow: "0 10px 30px rgba(0,0,0,0.1)", marginBottom: 12, width: "80%" }}>
+                  <h2 style={{ fontSize: "2.5rem", margin: 0, color: "var(--primary)" }}>50K+</h2>
+                  <p style={{ margin: 0, fontWeight: 600, color: "var(--muted)" }}>{t("home.activeTravelers")}</p>
+                </div>
+                <div style={{ padding: "20px", background: "var(--bg)", borderRadius: 16, boxShadow: "0 10px 30px rgba(0,0,0,0.1)", width: "80%" }}>
+                  <h2 style={{ fontSize: "2.5rem", margin: 0, color: "var(--accent)" }}>10K+</h2>
+                  <p style={{ margin: 0, fontWeight: 600, color: "var(--muted)" }}>{t("home.routesPlanned")}</p>
+                </div>
+              </>
+            ) : (
+              <HomeAuth />
+            )}
           </div>
         </div>
       </section>
