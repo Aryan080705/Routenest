@@ -145,14 +145,11 @@ router.patch("/:id", (req, res) => {
 
   // Enforce 24-hour edit window
   const ageMs = Date.now() - new Date(review.createdAt).getTime();
-  const isPast24h = ageMs > 24 * 3600 * 1000;
+  if (ageMs > 24 * 3600 * 1000) {
+    return res.status(403).json({ error: "Reviews cannot be edited after 24 hours." });
+  }
 
   const { text, rating } = req.body;
-  
-  // If they are trying to update the rating after 24h, block it
-  if (rating !== undefined && Number(rating) !== review.rating && isPast24h) {
-    return res.status(403).json({ error: "Ratings cannot be changed after 24 hours." });
-  }
 
   if (!text || text.trim().length < 30) {
     return res.status(400).json({ error: "Review text must be at least 30 characters." });

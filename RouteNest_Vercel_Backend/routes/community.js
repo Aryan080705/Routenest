@@ -135,6 +135,11 @@ router.patch("/:id", (req, res) => {
   if (!p) return res.status(404).json({ error: "Post not found." });
   if (p.authorId !== user.id) return res.status(403).json({ error: "You can only edit your own posts." });
 
+  const ageMs = Date.now() - new Date(p.createdAt).getTime();
+  if (ageMs > 24 * 3600 * 1000) {
+    return res.status(403).json({ error: "Posts cannot be edited after 24 hours." });
+  }
+
   const { title, body, photo, topic } = req.body || {};
   if (title) p.title = String(title).trim();
   if (body) p.body = String(body).trim();
