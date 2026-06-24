@@ -654,7 +654,11 @@ function CommunityPage() {
     try { await api.post("/api/community", np); toast(t("success.posted")); setShowNew(false); setNp({ title: "", body: "", topic: "travel-tips", photo: "" }); load(); }
     catch (err) { toast(err.response?.data?.detail || err.response?.data?.error || t("errors.network"), "error"); }
   };
-  const startEdit = (p) => { setEditingId(p.id); setEditDraft({ title: p.title, body: p.body, topic: p.topic, photo: p.photo || "" }); };
+  const isPast24h = (p) => (Date.now() - new Date(p.createdAt).getTime()) > 24 * 3600 * 1000;
+  const startEdit = (p) => {
+    if (isPast24h(p)) { toast("Editing is only allowed within 24 hours of posting.", "error"); return; }
+    setEditingId(p.id); setEditDraft({ title: p.title, body: p.body, topic: p.topic, photo: p.photo || "" });
+  };
   const saveEdit = async (p) => {
     if (!editDraft.title || !editDraft.body) { toast(t("errors.required"), "error"); return; }
     try { await api.patch(`/api/community/${p.id}`, editDraft); toast(t("success.saved")); setEditingId(null); load(); }
@@ -795,7 +799,8 @@ function CommunityPage() {
               <button className="action-btn" onClick={() => share(p, "whatsapp")} data-testid={`share-wa-${p.id}`}>↗ WhatsApp</button>
               <button className="action-btn" onClick={() => share(p, "twitter")} data-testid={`share-tw-${p.id}`}>↗ Twitter</button>
               {user && <button className="action-btn" onClick={() => report(p)} data-testid={`report-${p.id}`}>⚑ {t("community.report")}</button>}
-              {user && p.authorId === user.id && editingId !== p.id && <button className="action-btn" onClick={() => startEdit(p)} data-testid={`edit-${p.id}`}>✎ {t("reviews.edit")}</button>}
+              {user && p.authorId === user.id && editingId !== p.id && !isPast24h(p) && <button className="action-btn" onClick={() => startEdit(p)} data-testid={`edit-${p.id}`}>✎ {t("reviews.edit")}</button>}
+              {user && p.authorId === user.id && isPast24h(p) && <span className="action-btn" style={{ opacity: 0.4, cursor: "not-allowed" }} title="Editing locked after 24 hours">🔒 Edit locked</span>}
               {user && p.authorId === user.id && <button className="action-btn btn-danger" onClick={() => del(p)} data-testid={`delete-${p.id}`}>{t("community.delete")}</button>}
             </div>
             <CommentBlock post={p} onChange={load} />
@@ -963,7 +968,8 @@ function ReviewsPage() {
             </>) : <p>{r.text}</p>}
             <div className="row" style={{ gap: 6, flexWrap: "wrap" }}>
               <button className="action-btn" onClick={() => helpful(r)} data-testid={`rev-helpful-${r.id}`}>👍 {t("reviews.helpful")} ({r.helpful})</button>
-              {canEdit(r) && editing !== r.id && <button className="action-btn" onClick={() => { setEditing(r.id); setEditText(r.text); setEditRating(r.rating); }} data-testid={`rev-edit-${r.id}`}>{t("reviews.edit")}</button>}
+              {canEdit(r) && !isPast24h(r) && editing !== r.id && <button className="action-btn" onClick={() => { setEditing(r.id); setEditText(r.text); setEditRating(r.rating); }} data-testid={`rev-edit-${r.id}`}>{t("reviews.edit")}</button>}
+              {canEdit(r) && isPast24h(r) && editing !== r.id && <span className="action-btn" style={{ opacity: 0.4, cursor: "not-allowed" }} title="Editing locked after 24 hours">🔒 Edit locked</span>}
               <button className="action-btn" onClick={() => report(r)} data-testid={`rev-report-${r.id}`}>⚑ {t("reviews.reportR")}</button>
             </div>
           </div>
