@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback, Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate, Navigate, useLocation } from "react-router-dom";
 import "./App.css";
 import { I18nProvider, useI18n } from "./i18n";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
@@ -52,47 +52,103 @@ function Header() {
   const { theme, toggle } = useTheme();
   const { user, logout } = useAuth();
   const [unread, setUnread] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+
+  // Close mobile menu on route change
+  useEffect(() => { setMenuOpen(false); }, [location.pathname]);
+
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    if (menuOpen) { document.body.style.overflow = 'hidden'; }
+    else { document.body.style.overflow = ''; }
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
 
   useEffect(() => {
     if (!user) { setUnread(0); return; }
     const load = () => api.get(`/api/notifications/unread-count/${user.id}`).then(r => setUnread(r.data.unreadCount)).catch(() => {});
     load();
-    const id = setInterval(load, 60000); // reduced from 15s → 60s for mobile performance
+    const id = setInterval(load, 60000);
     return () => clearInterval(id);
   }, [user]);
 
   return (
-    <header className="hdr">
-      <div className="container hdr-row">
-        <Link to="/" className="brand" data-testid="brand-link"><span className="brand-dot" />{t("appName")}</Link>
-        <nav className="nav">
-          <NavLink to="/" end data-testid="nav-home">{t("nav.home")}</NavLink>
-          <NavLink to="/planner" data-testid="nav-planner">{t("nav.planner")}</NavLink>
-          <NavLink to="/community" data-testid="nav-community">{t("nav.community")}</NavLink>
-          <NavLink to="/reviews" data-testid="nav-reviews">{t("nav.reviews")}</NavLink>
-          {user && <NavLink to="/notifications" data-testid="nav-notifications">{t("nav.notifications")}{unread > 0 && <span style={{ marginLeft: 6, background: "var(--accent)", color: "white", padding: "1px 7px", borderRadius: 999, fontSize: 11 }}>{unread}</span>}</NavLink>}
-          {user && <NavLink to="/profile" data-testid="nav-profile">{t("nav.profile")}</NavLink>}
-          {user && <NavLink to="/moderation" data-testid="nav-moderation">{t("nav.admin")}</NavLink>}
+    <>
+      <header className="hdr">
+        <div className="container hdr-row">
+          <Link to="/" className="brand" data-testid="brand-link"><span className="brand-dot" />{t("appName")}</Link>
+
+          {/* Desktop navigation */}
+          <nav className="nav">
+            <NavLink to="/" end data-testid="nav-home">{t("nav.home")}</NavLink>
+            <NavLink to="/planner" data-testid="nav-planner">{t("nav.planner")}</NavLink>
+            <NavLink to="/community" data-testid="nav-community">{t("nav.community")}</NavLink>
+            <NavLink to="/reviews" data-testid="nav-reviews">{t("nav.reviews")}</NavLink>
+            {user && <NavLink to="/notifications" data-testid="nav-notifications">{t("nav.notifications")}{unread > 0 && <span style={{ marginLeft: 6, background: "var(--accent)", color: "white", padding: "1px 7px", borderRadius: 999, fontSize: 11 }}>{unread}</span>}</NavLink>}
+            {user && <NavLink to="/profile" data-testid="nav-profile">{t("nav.profile")}</NavLink>}
+            {user && <NavLink to="/moderation" data-testid="nav-moderation">{t("nav.admin")}</NavLink>}
+          </nav>
+
+          {/* Desktop right actions */}
+          <div className="hdr-right">
+            <select className="lang-sel" value={lang} onChange={e => setLang(e.target.value)} data-testid="lang-selector">
+              {languages.map(l => <option key={l.code} value={l.code}>{l.label}</option>)}
+            </select>
+            <button className="icon-btn" onClick={toggle} title="Toggle theme" data-testid="theme-toggle">{theme === "dark" ? "☀" : "☾"}</button>
+            {user ? (
+              <>
+                <Link to="/settings" className="icon-btn" data-testid="nav-settings">⚙</Link>
+                <button className="btn" onClick={logout} data-testid="logout-btn">{t("nav.logout")}</button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="btn" data-testid="nav-login">{t("nav.login")}</Link>
+                <Link to="/register" className="btn btn-primary" data-testid="nav-register">{t("nav.register")}</Link>
+              </>
+            )}
+          </div>
+
+          {/* Mobile hamburger */}
+          <button className="hamburger" onClick={() => setMenuOpen(true)} aria-label="Open menu" data-testid="hamburger-btn">☰</button>
+        </div>
+      </header>
+
+      {/* Mobile slide-out menu */}
+      <div className={`mobile-menu-overlay ${menuOpen ? "open" : ""}`} onClick={() => setMenuOpen(false)} />
+      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+        <div className="mobile-menu-header">
+          <Link to="/" className="brand" onClick={() => setMenuOpen(false)}><span className="brand-dot" />{t("appName")}</Link>
+          <button className="mobile-menu-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">✕</button>
+        </div>
+        <nav className="mobile-nav">
+          <NavLink to="/" end onClick={() => setMenuOpen(false)}><span className="mobile-nav-icon">🏠</span>{t("nav.home")}</NavLink>
+          <NavLink to="/planner" onClick={() => setMenuOpen(false)}><span className="mobile-nav-icon">🗺️</span>{t("nav.planner")}</NavLink>
+          <NavLink to="/community" onClick={() => setMenuOpen(false)}><span className="mobile-nav-icon">💬</span>{t("nav.community")}</NavLink>
+          <NavLink to="/reviews" onClick={() => setMenuOpen(false)}><span className="mobile-nav-icon">⭐</span>{t("nav.reviews")}</NavLink>
+          {user && <NavLink to="/notifications" onClick={() => setMenuOpen(false)}><span className="mobile-nav-icon">🔔</span>{t("nav.notifications")}{unread > 0 && <span style={{ marginLeft: 6, background: "var(--accent)", color: "white", padding: "2px 8px", borderRadius: 999, fontSize: 11, fontWeight: 700 }}>{unread}</span>}</NavLink>}
+          {user && <NavLink to="/profile" onClick={() => setMenuOpen(false)}><span className="mobile-nav-icon">👤</span>{t("nav.profile")}</NavLink>}
+          {user && <NavLink to="/moderation" onClick={() => setMenuOpen(false)}><span className="mobile-nav-icon">🛡️</span>{t("nav.admin")}</NavLink>}
+          {user && <NavLink to="/settings" onClick={() => setMenuOpen(false)}><span className="mobile-nav-icon">⚙️</span>Settings</NavLink>}
         </nav>
-        <div className="hdr-right">
-          <select className="lang-sel" value={lang} onChange={e => setLang(e.target.value)} data-testid="lang-selector">
-            {languages.map(l => <option key={l.code} value={l.code}>{l.label}</option>)}
-          </select>
-          <button className="icon-btn" onClick={toggle} title="Toggle theme" data-testid="theme-toggle">{theme === "dark" ? "☀" : "☾"}</button>
+        <div className="mobile-menu-actions">
+          <div className="row">
+            <select className="lang-sel" value={lang} onChange={e => setLang(e.target.value)} style={{ flex: 1 }}>
+              {languages.map(l => <option key={l.code} value={l.code}>{l.label}</option>)}
+            </select>
+            <button className="icon-btn" onClick={toggle} title="Toggle theme">{theme === "dark" ? "☀" : "☾"}</button>
+          </div>
           {user ? (
-            <>
-              <Link to="/settings" className="icon-btn" data-testid="nav-settings">⚙</Link>
-              <button className="btn" onClick={logout} data-testid="logout-btn">{t("nav.logout")}</button>
-            </>
+            <button className="btn btn-primary" onClick={() => { logout(); setMenuOpen(false); }} style={{ width: "100%" }}>{t("nav.logout")}</button>
           ) : (
-            <>
-              <Link to="/login" className="btn" data-testid="nav-login">{t("nav.login")}</Link>
-              <Link to="/register" className="btn btn-primary" data-testid="nav-register">{t("nav.register")}</Link>
-            </>
+            <div className="row" style={{ gap: 8 }}>
+              <Link to="/login" className="btn" onClick={() => setMenuOpen(false)} style={{ flex: 1, textAlign: "center" }}>{t("nav.login")}</Link>
+              <Link to="/register" className="btn btn-primary" onClick={() => setMenuOpen(false)} style={{ flex: 1, textAlign: "center" }}>{t("nav.register")}</Link>
+            </div>
           )}
         </div>
       </div>
-    </header>
+    </>
   );
 }
 
@@ -650,7 +706,7 @@ function CommunityPage() {
     <div className="container">
       <div className="row between" style={{ marginBottom: 8 }}>
         <h1 className="page-title">{t("community.title")}</h1>
-        {user && user.verified && <button className="btn btn-primary" onClick={() => { if (tab === "forums") { setTab("latest"); setShowNew(true); } else { setShowNew(!showNew); } }} data-testid="new-post-btn">{t("community.new")}</button>}
+        {user && user.verified && <button className="btn btn-primary desktop-new-post" onClick={() => { if (tab === "forums") { setTab("latest"); setShowNew(true); } else { setShowNew(!showNew); } }} data-testid="new-post-btn">{t("community.new")}</button>}
         {user && !user.verified && <span className="muted" style={{ fontSize: 13, background: "var(--bg-soft)", padding: "6px 12px", borderRadius: 8 }}>{t("community.verifiedOnlyShort")}</span>}
       </div>
       <div className="tabs">
@@ -747,6 +803,10 @@ function CommunityPage() {
           );
         })}
       </>)}
+      {/* Mobile Floating Action Button for new post */}
+      {user && user.verified && (
+        <button className="mobile-fab" onClick={() => { if (tab === "forums") { setTab("latest"); } setShowNew(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }} aria-label="New Post" data-testid="fab-new-post">＋</button>
+      )}
     </div>
   );
 }
