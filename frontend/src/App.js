@@ -525,12 +525,19 @@ function normalizePost(raw) {
 }
 
 function CommentBlock({ post, onChange }) {
-  const { t } = useI18n(); const { user } = useAuth();
+  const { t } = useI18n(); const { user } = useAuth(); const toast = useToast();
   const [text, setText] = useState(""); const [replyTo, setReplyTo] = useState(null); const [replyText, setReplyText] = useState("");
   const add = async (parentId, val) => {
     if (!user) return; if (!val.trim()) return;
-    await api.post(`/api/community/${post.id}/comment`, { text: val, parentId });
-    setText(""); setReplyText(""); setReplyTo(null); onChange();
+    const currentText = val;
+    setText(""); setReplyText(""); setReplyTo(null);
+    try {
+      await api.post(`/api/community/${post.id}/comment`, { text: currentText, parentId });
+      onChange();
+    } catch (err) {
+      if (parentId) setReplyText(currentText); else setText(currentText);
+      toast(t("errors.network"), "error");
+    }
   };
   return (
     <div className="comment-list">
@@ -599,8 +606,16 @@ function CommunityPage() {
   };
   const like = async (p) => {
     if (!user) { toast(t("community.verifiedOnly"), "error"); return; }
-    try { await api.post(`/api/community/${p.id}/like`, {}); load(); }
-    catch (err) { toast(err.response?.data?.detail || err.response?.data?.error || t("errors.network"), "error"); }
+    setPosts(prev => prev.map(post => {
+      if (post.id === p.id) {
+        const hasLiked = Array.isArray(post.likes) && post.likes.includes(user.id);
+        const newLikes = hasLiked ? post.likes.filter(id => id !== user.id) : [...(post.likes || []), user.id];
+        return { ...post, likes: newLikes, likeCount: newLikes.length };
+      }
+      return post;
+    }));
+    try { await api.post(`/api/community/${p.id}/like`, {}); }
+    catch (err) { load(); toast(err.response?.data?.detail || err.response?.data?.error || t("errors.network"), "error"); }
   };
   const report = async (p) => {
     const reason = prompt(t("community.reportReason") + " (spam/abusive/misleading/inappropriate)", "spam");
@@ -610,7 +625,7 @@ function CommunityPage() {
   };
   const share = async (p, platform) => {
     try {
-      await api.post(`/api/community/${p.id}/share`, { platform });
+      api.post(`/api/community/${p.id}/share`, { platform }).catch(()=>{});
       const url = window.location.origin + `/community#post-${p.id}`;
       const text = p.title;
       
@@ -627,7 +642,6 @@ function CommunityPage() {
         instagram: `https://www.instagram.com/?url=${encodeURIComponent(url)}` 
       };
       if (links[platform]) window.open(links[platform], "_blank");
-      load();
     } catch { toast(t("errors.network"), "error"); }
   };
   const del = async (p) => { if (!window.confirm(t("community.delete") + "?")) return; await api.delete(`/api/community/${p.id}`); load(); };
@@ -819,7 +833,11 @@ function ReviewsPage() {
     try { await api.post("/api/reviews", form); toast(t("success.reviewed")); setForm({ route: "", journeyId: "", rating: 5, text: "", completedJourney: true }); load(); }
     catch (err) { toast(err.response?.data?.detail || err.response?.data?.error || t("errors.network"), "error"); }
   };
-  const helpful = async (r) => { if (!user) return; await api.post(`/api/reviews/${r.id}/helpful`, {}); load(); };
+  const helpful = async (r) => { 
+    if (!user) return; 
+    setItems(prev => prev.map(item => item.id === r.id ? { ...item, helpful: (item.helpful || 0) + 1 } : item));
+    try { await api.post(`/api/reviews/${r.id}/helpful`, {}); } catch { load(); }
+  };
   const report = async (r) => { await api.post(`/api/reviews/${r.id}/report`, {}); toast(t("success.saved")); load(); };
   const saveEdit = async (r) => {
     try { await api.patch(`/api/reviews/${r.id}`, { text: editText, rating: editRating }); setEditing(null); load(); toast(t("success.saved")); }
