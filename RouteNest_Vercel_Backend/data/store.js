@@ -889,7 +889,12 @@ const initialData = () => ({
   userPreferences: {},
   users: [],
   sessions: {},
-  savedRoutes: {}
+  savedRoutes: {},
+  notificationHistory: [],
+  notificationQueue: [],
+  deliveryLogs: [],
+  notifications: [],
+  userProfiles: []
 });
 
 /* ── live store ─────────────────────────────────────────────── */
