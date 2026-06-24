@@ -140,12 +140,19 @@
     "required": "Este campo es obligatorio.",
     "invalidEmail": "Introduce un email válido.",
     "short": "La contraseña debe tener al menos 6 caracteres.",
-    "network": "Error de red. Inténtalo de nuevo."
+    "network": "Error de red. Inténtalo de nuevo.",
+    "editLocked": "Solo se permite editar dentro de las 24 horas de la publicación.",
+    "pushNotSupported": "Push no soportado en este navegador.",
+    "permissionDenied": "Permiso denegado.",
+    "verificationFailed": "Error al solicitar verificación.",
+    "prefsFailed": "Error al guardar preferencias."
   },
   "success": {
     "saved": "Guardado.", "posted": "Publicado.",
     "reviewed": "Reseña enviada.",
-    "prefs": "Preferencias actualizadas."
+    "prefs": "Preferencias actualizadas.",
+    "verified": "¡Verificación exitosa! Vuelve a iniciar sesión para actualizar.",
+    "prefsSaved": "Preferencias guardadas."
   },
   "topics": {
     "routes": "Rutas", "destinations": "Destinos",
@@ -153,7 +160,26 @@
     "budget": "Económico", "photos": "Fotos"
   },
   "common": {
-    "save": "Guardar"
+    "save": "Guardar",
+    "editLocked": "Edición bloqueada",
+    "editLockedTitle": "Edición bloqueada después de 24 horas",
+    "preferences": "Preferencias",
+    "notifPrefsTitle": "Preferencias de notificación",
+    "notifPrefsDesc": "Gestiona cómo recibes actualizaciones y alertas.",
+    "emailNotifs": "Notificaciones por email",
+    "emailNotifsDesc": "Recibe resúmenes diarios y alertas importantes por email.",
+    "pushNotifs": "Notificaciones push",
+    "pushNotifsDesc": "Alertas instantáneas en tu dispositivo para actualizaciones de viaje.",
+    "promoOffers": "Ofertas promocionales",
+    "promoOffersDesc": "Recibe ofertas exclusivas y destacados de la comunidad.",
+    "markComplete": "Marcar viaje completo y reseñar",
+    "share": "Compartir",
+    "trusted": "Confiable",
+    "verified": "Usuario verificado",
+    "requestVerification": "Solicitar verificación",
+    "settings": "Ajustes",
+    "adminReviewed": "Revisado por admin",
+    "lockedAfter24h": "Bloqueado después de 24h"
   },
   "forumsList": {
     "routes": {

@@ -140,12 +140,19 @@
     "required": "This field is required.",
     "invalidEmail": "Enter a valid email.",
     "short": "Password must be at least 6 characters.",
-    "network": "Network error. Please try again."
+    "network": "Network error. Please try again.",
+    "editLocked": "Editing is only allowed within 24 hours of posting.",
+    "pushNotSupported": "Push not supported in this browser.",
+    "permissionDenied": "Permission denied.",
+    "verificationFailed": "Failed to request verification.",
+    "prefsFailed": "Failed to save preferences."
   },
   "success": {
     "saved": "Saved.", "posted": "Posted.",
     "reviewed": "Review submitted.",
-    "prefs": "Preferences updated."
+    "prefs": "Preferences updated.",
+    "verified": "Verification successful! Please re-login to update your session.",
+    "prefsSaved": "Preferences saved."
   },
   "topics": {
     "routes": "Routes", "destinations": "Destinations",
@@ -153,7 +160,26 @@
     "budget": "Budget", "photos": "Photos"
   },
   "common": {
-    "save": "Save"
+    "save": "Save",
+    "editLocked": "Edit locked",
+    "editLockedTitle": "Editing locked after 24 hours",
+    "preferences": "Preferences",
+    "notifPrefsTitle": "Notification Preferences",
+    "notifPrefsDesc": "Manage how you receive updates and alerts.",
+    "emailNotifs": "Email Notifications",
+    "emailNotifsDesc": "Receive daily summaries and important alerts via email.",
+    "pushNotifs": "Push Notifications",
+    "pushNotifsDesc": "Instant alerts on your device for journey updates.",
+    "promoOffers": "Promotional Offers",
+    "promoOffersDesc": "Receive exclusive deals and community highlights.",
+    "markComplete": "Mark Journey Complete & Review",
+    "share": "Share",
+    "trusted": "Trusted",
+    "verified": "Verified User",
+    "requestVerification": "Request Verification",
+    "settings": "Settings",
+    "adminReviewed": "Admin reviewed",
+    "lockedAfter24h": "Locked after 24h"
   },
   "forumsList": {
     "routes": {

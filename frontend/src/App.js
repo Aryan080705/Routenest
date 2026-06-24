@@ -129,7 +129,7 @@ function Header() {
           {user && <NavLink to="/notifications" onClick={() => setMenuOpen(false)}><span className="mobile-nav-icon">🔔</span>{t("nav.notifications")}{unread > 0 && <span style={{ marginLeft: 6, background: "var(--accent)", color: "white", padding: "2px 8px", borderRadius: 999, fontSize: 11, fontWeight: 700 }}>{unread}</span>}</NavLink>}
           {user && <NavLink to="/profile" onClick={() => setMenuOpen(false)}><span className="mobile-nav-icon">👤</span>{t("nav.profile")}</NavLink>}
           {user && <NavLink to="/moderation" onClick={() => setMenuOpen(false)}><span className="mobile-nav-icon">🛡️</span>{t("nav.admin")}</NavLink>}
-          {user && <NavLink to="/settings" onClick={() => setMenuOpen(false)}><span className="mobile-nav-icon">⚙️</span>Settings</NavLink>}
+          {user && <NavLink to="/settings" onClick={() => setMenuOpen(false)}><span className="mobile-nav-icon">⚙️</span>{t("nav.settings")}</NavLink>}
         </nav>
         <div className="mobile-menu-actions">
           <div className="row">
@@ -656,7 +656,7 @@ function CommunityPage() {
   };
   const isPast24h = (p) => (Date.now() - new Date(p.createdAt).getTime()) > 24 * 3600 * 1000;
   const startEdit = (p) => {
-    if (isPast24h(p)) { toast("Editing is only allowed within 24 hours of posting.", "error"); return; }
+    if (isPast24h(p)) { toast(t("errors.editLocked"), "error"); return; }
     setEditingId(p.id); setEditDraft({ title: p.title, body: p.body, topic: p.topic, photo: p.photo || "" });
   };
   const saveEdit = async (p) => {
@@ -800,7 +800,7 @@ function CommunityPage() {
               <button className="action-btn" onClick={() => share(p, "twitter")} data-testid={`share-tw-${p.id}`}>↗ Twitter</button>
               {user && <button className="action-btn" onClick={() => report(p)} data-testid={`report-${p.id}`}>⚑ {t("community.report")}</button>}
               {user && p.authorId === user.id && editingId !== p.id && !isPast24h(p) && <button className="action-btn" onClick={() => startEdit(p)} data-testid={`edit-${p.id}`}>✎ {t("reviews.edit")}</button>}
-              {user && p.authorId === user.id && isPast24h(p) && <span className="action-btn" style={{ opacity: 0.4, cursor: "not-allowed" }} title="Editing locked after 24 hours">🔒 Edit locked</span>}
+              {user && p.authorId === user.id && isPast24h(p) && <span className="action-btn" style={{ opacity: 0.4, cursor: "not-allowed" }} title={t("common.editLockedTitle")}>🔒 {t("common.editLocked")}</span>}
               {user && p.authorId === user.id && <button className="action-btn btn-danger" onClick={() => del(p)} data-testid={`delete-${p.id}`}>{t("community.delete")}</button>}
             </div>
             <CommentBlock post={p} onChange={load} />
@@ -953,7 +953,7 @@ function ReviewsPage() {
             </div>
             {editing === r.id ? (<>
               <div className="field" style={{ marginBottom: 8 }}>
-                <label style={{ fontSize: 13, fontWeight: 600, marginBottom: 4, display: "block" }}>{t("reviews.rating")} {isPast24h(r) && <span className="muted" style={{ fontWeight: 400 }}>(Locked after 24h)</span>}</label>
+                <label style={{ fontSize: 13, fontWeight: 600, marginBottom: 4, display: "block" }}>{t("reviews.rating")} {isPast24h(r) && <span className="muted" style={{ fontWeight: 400 }}>({t("common.lockedAfter24h")})</span>}</label>
                 <div className="rating-input" style={{ opacity: isPast24h(r) ? 0.6 : 1, pointerEvents: isPast24h(r) ? "none" : "auto" }}>
                   {[1,2,3,4,5].map(n => (
                     <button key={n} type="button" className={n <= editRating ? "on" : ""} onClick={() => setEditRating(n)} data-testid={`rev-edit-star-${r.id}-${n}`}>★</button>
@@ -969,7 +969,7 @@ function ReviewsPage() {
             <div className="row" style={{ gap: 6, flexWrap: "wrap" }}>
               <button className="action-btn" onClick={() => helpful(r)} data-testid={`rev-helpful-${r.id}`}>👍 {t("reviews.helpful")} ({r.helpful})</button>
               {canEdit(r) && !isPast24h(r) && editing !== r.id && <button className="action-btn" onClick={() => { setEditing(r.id); setEditText(r.text); setEditRating(r.rating); }} data-testid={`rev-edit-${r.id}`}>{t("reviews.edit")}</button>}
-              {canEdit(r) && isPast24h(r) && editing !== r.id && <span className="action-btn" style={{ opacity: 0.4, cursor: "not-allowed" }} title="Editing locked after 24 hours">🔒 Edit locked</span>}
+              {canEdit(r) && isPast24h(r) && editing !== r.id && <span className="action-btn" style={{ opacity: 0.4, cursor: "not-allowed" }} title={t("common.editLockedTitle")}>🔒 {t("common.editLocked")}</span>}
               <button className="action-btn" onClick={() => report(r)} data-testid={`rev-report-${r.id}`}>⚑ {t("reviews.reportR")}</button>
             </div>
           </div>
@@ -1074,9 +1074,9 @@ function NotificationsPage() {
   const savePrefs = async () => { await api.put(`/api/notifications/preferences/${user.id}`, prefs); toast(t("success.prefs")); };
 
   const enablePush = async () => {
-    if (typeof Notification === "undefined") { toast("Push not supported in this browser", "error"); return; }
+    if (typeof Notification === "undefined") { toast(t("errors.pushNotSupported"), "error"); return; }
     const permission = await Notification.requestPermission();
-    if (permission !== "granted") { toast("Permission denied", "error"); return; }
+    if (permission !== "granted") { toast(t("errors.permissionDenied"), "error"); return; }
 
     setPushEnabled(true);
     let subscribed = false;
@@ -1196,9 +1196,9 @@ function NotificationsPage() {
           <div className="row" style={{ gap: 8, alignItems: "center" }}>
             <span style={{ color: "var(--good)", fontSize: 18 }}>🔔</span>
             <div>
-              <strong style={{ fontSize: 13 }}>Push Notifications Active</strong>
+              <strong style={{ fontSize: 13 }}>{t("notifications.pushActive")}</strong>
               <div className="muted" style={{ fontSize: 12 }}>
-                {pushType === "vapid" ? "Real-time VAPID push enabled" : "Browser notifications enabled"}
+                {pushType === "vapid" ? t("notifications.vapidPush") : t("notifications.browserPush")}
               </div>
             </div>
             <span className="tag tag-low" style={{ marginLeft: "auto" }}>
@@ -1282,10 +1282,10 @@ function ProfilePage() {
     setBusy(true);
     try {
       await api.post(`/api/profiles/${user.id}/verify`);
-      toast("Verification successful! Please re-login to update your session.");
+      toast(t("success.verified"));
       loadProfile();
     } catch {
-      toast("Failed to request verification.", "error");
+      toast(t("errors.verificationFailed"), "error");
     } finally {
       setBusy(false);
     }
@@ -1293,8 +1293,8 @@ function ProfilePage() {
 
   const savePrefs = async (newPrefs) => {
     setPrefs(newPrefs);
-    try { await api.patch("/api/auth/me/preferences", { notifications: newPrefs }); toast("Preferences saved."); }
-    catch { toast("Failed to save preferences", "error"); }
+    try { await api.patch("/api/auth/me/preferences", { notifications: newPrefs }); toast(t("success.prefsSaved")); }
+    catch { toast(t("errors.prefsFailed"), "error"); }
   };
 
   if (!user) return <Navigate to="/login" />;
@@ -1344,7 +1344,7 @@ function ProfilePage() {
         <button className={`tab ${tab === "posts" ? "active" : ""}`} onClick={() => setTab("posts")} data-testid="profile-tab-posts">{t("profile.posts")}</button>
         <button className={`tab ${tab === "reviews" ? "active" : ""}`} onClick={() => setTab("reviews")} data-testid="profile-tab-reviews">{t("reviews.title")}</button>
         <button className={`tab ${tab === "activity" ? "active" : ""}`} onClick={() => setTab("activity")} data-testid="profile-tab-activity">{t("profile.travelHistory")}</button>
-        <button className={`tab ${tab === "preferences" ? "active" : ""}`} onClick={() => setTab("preferences")} data-testid="profile-tab-preferences">Preferences</button>
+        <button className={`tab ${tab === "preferences" ? "active" : ""}`} onClick={() => setTab("preferences")} data-testid="profile-tab-preferences">{t("common.preferences")}</button>
       </div>
 
       {tab === "posts" && (
@@ -1385,7 +1385,7 @@ function ProfilePage() {
               <strong>{a.title}</strong>
               {a.body && <div className="muted" style={{ fontSize: 13, marginTop: 4 }}>{a.body.slice(0, 120)}{a.body.length > 120 ? "…" : ""}</div>}
               {a.kind === "route" && (
-                <button className="btn" style={{ marginTop: 8, padding: "4px 12px", fontSize: 13 }} onClick={() => navigate("/reviews")}>Mark Journey Complete & Review</button>
+                <button className="btn" style={{ marginTop: 8, padding: "4px 12px", fontSize: 13 }} onClick={() => navigate("/reviews")}>{t("common.markComplete")}</button>
               )}
             </div>
           ))}
@@ -1394,28 +1394,28 @@ function ProfilePage() {
 
       {tab === "preferences" && (
         <div className="card" data-testid="profile-pane-preferences">
-          <h3 style={{ marginTop: 0 }}>Notification Preferences</h3>
-          <p className="muted" style={{ marginBottom: 16 }}>Manage how you receive updates and alerts.</p>
+          <h3 style={{ marginTop: 0 }}>{t("common.notifPrefsTitle")}</h3>
+          <p className="muted" style={{ marginBottom: 16 }}>{t("common.notifPrefsDesc")}</p>
           <div className="col" style={{ gap: 16 }}>
             <label className="checkbox" style={{ alignItems: "flex-start" }}>
               <input type="checkbox" checked={prefs.email} onChange={e => savePrefs({ ...prefs, email: e.target.checked })} style={{ marginTop: 4 }} />
               <div>
-                <strong style={{ display: "block" }}>Email Notifications</strong>
-                <span className="muted" style={{ fontSize: 13 }}>Receive daily summaries and important alerts via email.</span>
+                <strong style={{ display: "block" }}>{t("common.emailNotifs")}</strong>
+                <span className="muted" style={{ fontSize: 13 }}>{t("common.emailNotifsDesc")}</span>
               </div>
             </label>
             <label className="checkbox" style={{ alignItems: "flex-start" }}>
               <input type="checkbox" checked={prefs.push} onChange={e => savePrefs({ ...prefs, push: e.target.checked })} style={{ marginTop: 4 }} />
               <div>
-                <strong style={{ display: "block" }}>Push Notifications</strong>
-                <span className="muted" style={{ fontSize: 13 }}>Instant alerts on your device for journey updates.</span>
+                <strong style={{ display: "block" }}>{t("common.pushNotifs")}</strong>
+                <span className="muted" style={{ fontSize: 13 }}>{t("common.pushNotifsDesc")}</span>
               </div>
             </label>
             <label className="checkbox" style={{ alignItems: "flex-start" }}>
               <input type="checkbox" checked={prefs.promos} onChange={e => savePrefs({ ...prefs, promos: e.target.checked })} style={{ marginTop: 4 }} />
               <div>
-                <strong style={{ display: "block" }}>Promotional Offers</strong>
-                <span className="muted" style={{ fontSize: 13 }}>Receive exclusive deals and community highlights.</span>
+                <strong style={{ display: "block" }}>{t("common.promoOffers")}</strong>
+                <span className="muted" style={{ fontSize: 13 }}>{t("common.promoOffersDesc")}</span>
               </div>
             </label>
           </div>
