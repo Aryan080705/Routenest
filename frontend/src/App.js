@@ -507,7 +507,7 @@ function PlannerPage() {
             {routes.length > 0 && (
               <div className="row" style={{ marginTop: 10, gap: 8 }}>
                 <button type="button" className="btn" onClick={generate} data-testid="planner-refresh">{t("planner.refreshTraffic")}</button>
-                {user && <button type="button" className="btn" onClick={saveCurrent} data-testid="planner-save">{t("planner.save")}</button>}
+                <button type="button" className="btn" onClick={saveCurrent} data-testid="planner-save">{t("planner.save")}</button>
               </div>
             )}
           </form>

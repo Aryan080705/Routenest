@@ -18,7 +18,8 @@ async function connectDB() {
     try {
       if (fs.existsSync(DATA_FILE)) {
         const rawData = fs.readFileSync(DATA_FILE, 'utf-8');
-        setStore(JSON.parse(rawData));
+        const parsedData = JSON.parse(rawData);
+        setStore({ ...getStore(), ...parsedData });
         console.log("📥 Loaded store state from local data.json.");
       } else {
         fs.writeFileSync(DATA_FILE, JSON.stringify(getStore()));
@@ -40,7 +41,7 @@ async function connectDB() {
     // Load store from DB into memory
     let doc = await StoreModel.findOne({ key: 'main' });
     if (doc && doc.data) {
-      setStore(doc.data);
+      setStore({ ...getStore(), ...doc.data });
       console.log("📥 Loaded store state from MongoDB.");
     } else {
       // Initialize with default memory state
