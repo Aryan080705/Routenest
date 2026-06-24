@@ -85,7 +85,7 @@ async function buildORSRoutes(start, destination, waypoints = []) {
   const cacheKey = coordString;
   if (routeCache.has(cacheKey)) return routeCache.get(cacheKey);
 
-  const orsKey = process.env.ORS_API_KEY || "YOUR_ORS_API_KEY";
+  const orsKey = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjEwODI5Zjk0YTBjMDRjODNhZjZiYjY2N2EyMmE2MTJmIiwiaCI6Im11cm11cjY0In0=";
   const url = `https://api.openrouteservice.org/v2/directions/driving-car/geojson`;
 
   const response = await fetch(url, {
