@@ -71,11 +71,18 @@ function AuthModal({ trigger, defaultMode = "login" }) {
     finally { setBusy(false); }
   };
 
+  const triggerElement = React.cloneElement(trigger, {
+    onClick: (e) => {
+      e.preventDefault();
+      setOpen(true);
+      if (trigger.props.onClick) trigger.props.onClick(e);
+    }
+  });
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger}
-      </DialogTrigger>
+    <>
+      {triggerElement}
+      <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[425px]" style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "16px", padding: "24px" }}>
         <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
           <button type="button" className={`btn ${mode === "login" ? "btn-primary" : "btn-ghost"}`} style={{ flex: 1 }} onClick={() => setMode("login")}>{t("auth.login")}</button>
