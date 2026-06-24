@@ -6,6 +6,7 @@ import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { api } from "./lib/api";
 import { getSocket } from "./lib/socket";
+import { Dialog, DialogContent, DialogTrigger } from "./components/ui/dialog";
 
 // Leaflet loaded lazily — only when user visits /planner
 let _leafletLoaded = false;
@@ -45,6 +46,53 @@ function ToastProvider({ children }) {
   return <ToastCtx.Provider value={show}>{children}{t && <div data-testid="toast" className={`toast ${t.type === "error" ? "error" : ""}`}>{t.msg}</div>}</ToastCtx.Provider>;
 }
 const useToast = () => React.useContext(ToastCtx);
+
+// ─── AuthModal ───
+function AuthModal({ trigger, defaultMode = "login" }) {
+  const { t } = useI18n(); const { login, register } = useAuth(); const nav = useNavigate(); const toast = useToast();
+  const [mode, setMode] = useState(defaultMode);
+  const [name, setName] = useState(""); const [email, setEmail] = useState(""); const [pw, setPw] = useState(""); const [busy, setBusy] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => { setMode(defaultMode); }, [defaultMode, open]);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (mode === "register" && pw.length < 6) { toast(t("errors.short"), "error"); return; }
+    setBusy(true);
+    try { 
+      if (mode === "login") { await login(email, pw); } 
+      else { await register(name, email, pw); }
+      toast(t("success.saved")); 
+      setOpen(false); 
+      nav("/"); 
+    }
+    catch (err) { toast(err.response?.data?.detail || err.response?.data?.error || t("errors.network"), "error"); }
+    finally { setBusy(false); }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        {trigger}
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]" style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "16px", padding: "24px" }}>
+        <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+          <button type="button" className={`btn ${mode === "login" ? "btn-primary" : "btn-ghost"}`} style={{ flex: 1 }} onClick={() => setMode("login")}>{t("auth.login")}</button>
+          <button type="button" className={`btn ${mode === "register" ? "btn-primary" : "btn-ghost"}`} style={{ flex: 1 }} onClick={() => setMode("register")}>{t("auth.register")}</button>
+        </div>
+        <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          {mode === "register" && (
+            <div className="field" style={{ marginBottom: 0 }}><label>{t("auth.name")}</label><input className="input" required value={name} onChange={e => setName(e.target.value)} /></div>
+          )}
+          <div className="field" style={{ marginBottom: 0 }}><label>{t("auth.email")}</label><input className="input" type="email" required value={email} onChange={e => setEmail(e.target.value)} /></div>
+          <div className="field" style={{ marginBottom: 0 }}><label>{t("auth.password")}</label><input className="input" type="password" required value={pw} onChange={e => setPw(e.target.value)} /></div>
+          <button className="btn btn-primary" type="submit" disabled={busy} style={{ width: "100%", marginTop: 8 }}>{busy ? <span className="spinner" /> : (mode === "login" ? t("auth.login") : t("auth.register"))}</button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 // ─── Header ───
 function Header() {
@@ -103,8 +151,8 @@ function Header() {
               </>
             ) : (
               <>
-                <Link to="/login" className="btn" data-testid="nav-login">{t("nav.login")}</Link>
-                <Link to="/register" className="btn btn-primary" data-testid="nav-register">{t("nav.register")}</Link>
+                <AuthModal defaultMode="login" trigger={<button className="btn" data-testid="nav-login">{t("nav.login")}</button>} />
+                <AuthModal defaultMode="register" trigger={<button className="btn btn-primary" data-testid="nav-register">{t("nav.register")}</button>} />
               </>
             )}
           </div>
@@ -142,8 +190,12 @@ function Header() {
             <button className="btn btn-primary" onClick={() => { logout(); setMenuOpen(false); }} style={{ width: "100%" }}>{t("nav.logout")}</button>
           ) : (
             <div className="row" style={{ gap: 8 }}>
-              <Link to="/login" className="btn" onClick={() => setMenuOpen(false)} style={{ flex: 1, textAlign: "center" }}>{t("nav.login")}</Link>
-              <Link to="/register" className="btn btn-primary" onClick={() => setMenuOpen(false)} style={{ flex: 1, textAlign: "center" }}>{t("nav.register")}</Link>
+              <div style={{ flex: 1 }} onClick={() => setMenuOpen(false)}>
+                <AuthModal defaultMode="login" trigger={<button className="btn" style={{ width: "100%" }}>{t("nav.login")}</button>} />
+              </div>
+              <div style={{ flex: 1 }} onClick={() => setMenuOpen(false)}>
+                <AuthModal defaultMode="register" trigger={<button className="btn btn-primary" style={{ width: "100%" }}>{t("nav.register")}</button>} />
+              </div>
             </div>
           )}
         </div>
