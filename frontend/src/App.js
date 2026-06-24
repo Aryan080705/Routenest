@@ -650,7 +650,7 @@ function CommunityPage() {
     <div className="container">
       <div className="row between" style={{ marginBottom: 8 }}>
         <h1 className="page-title">{t("community.title")}</h1>
-        {user && user.verified && <button className="btn btn-primary" onClick={() => setShowNew(!showNew)} data-testid="new-post-btn">{t("community.new")}</button>}
+        {user && user.verified && <button className="btn btn-primary" onClick={() => { if (tab === "forums") { setTab("latest"); setShowNew(true); } else { setShowNew(!showNew); } }} data-testid="new-post-btn">{t("community.new")}</button>}
         {user && !user.verified && <span className="muted" style={{ fontSize: 13, background: "var(--bg-soft)", padding: "6px 12px", borderRadius: 8 }}>{t("community.verifiedOnlyShort")}</span>}
       </div>
       <div className="tabs">
