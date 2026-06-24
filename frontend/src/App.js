@@ -157,69 +157,57 @@ function Home() {
   const { t } = useI18n();
   return (
     <>
-      <div className="noise-overlay" />
-      <div className="container">
-        <section className="bento-hero">
-          <div className="bento-main">
-            <h1>{t("home.hero").split(" ").slice(0, -2).join(" ")} <em>{t("home.hero").split(" ").slice(-2).join(" ")}</em></h1>
-            <p>{t("home.sub")}</p>
-            <div className="bento-actions">
-              <Link to="/planner" className="btn btn-primary" data-testid="home-cta-planner">{t("home.cta")}</Link>
-              <Link to="/community" className="btn" style={{ background: "var(--bg)", border: "1px solid var(--border)", color: "var(--ink)" }} data-testid="home-cta-community">{t("home.cta2")}</Link>
+      <section className="hero container">
+        <div>
+          <h1>{t("home.hero").split(" ").slice(0, -2).join(" ")} <em>{t("home.hero").split(" ").slice(-2).join(" ")}</em></h1>
+          <p>{t("home.sub")}</p>
+          <div className="hero-actions">
+            <Link to="/planner" className="btn btn-primary" data-testid="home-cta-planner">{t("home.cta")}</Link>
+            <Link to="/community" className="btn" data-testid="home-cta-community">{t("home.cta2")}</Link>
+          </div>
+        </div>
+        <div className="hero-art" style={{ background: "linear-gradient(135deg, color-mix(in srgb, var(--primary) 15%, transparent), transparent)" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%", height: "100%", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
+            <div style={{ padding: "20px", background: "var(--bg)", borderRadius: 16, boxShadow: "0 10px 30px rgba(0,0,0,0.1)", marginBottom: 12, width: "80%" }}>
+              <h2 style={{ fontSize: "2.5rem", margin: 0, color: "var(--primary)" }}>50K+</h2>
+              <p style={{ margin: 0, fontWeight: 600, color: "var(--muted)" }}>{t("home.activeTravelers")}</p>
+            </div>
+            <div style={{ padding: "20px", background: "var(--bg)", borderRadius: 16, boxShadow: "0 10px 30px rgba(0,0,0,0.1)", width: "80%" }}>
+              <h2 style={{ fontSize: "2.5rem", margin: 0, color: "var(--accent)" }}>10K+</h2>
+              <p style={{ margin: 0, fontWeight: 600, color: "var(--muted)" }}>{t("home.routesPlanned")}</p>
             </div>
           </div>
-          
-          <div className="bento-card" style={{ gridColumn: "1", gridRow: "2" }}>
-            <div className="bento-card-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+      </section>
+      
+      <section className="section container">
+        <h2>{t("home.featuresTitle")}</h2>
+        <div className="grid-3">
+          {[1, 2, 3].map(i => (
+            <div className="feat" key={i}>
+              <div className="feat-num">0{i}</div>
+              <h3>{t(`home.f${i}Title`)}</h3>
+              <p>{t(`home.f${i}`)}</p>
             </div>
-            <h2 style={{ fontSize: "3rem", margin: 0, color: "var(--ink)", fontFamily: "'Fraunces', serif" }}>50K+</h2>
-            <p style={{ margin: 0, fontWeight: 600, color: "var(--ink-soft)" }}>{t("home.activeTravelers")}</p>
-          </div>
+          ))}
+        </div>
+      </section>
 
-          <div className="bento-card" style={{ gridColumn: "2", gridRow: "2" }}>
-            <div className="bento-card-icon" style={{ background: "color-mix(in srgb, var(--good) 15%, transparent)", color: "var(--good)" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
-            </div>
-            <h2 style={{ fontSize: "3rem", margin: 0, color: "var(--ink)", fontFamily: "'Fraunces', serif" }}>10K+</h2>
-            <p style={{ margin: 0, fontWeight: 600, color: "var(--ink-soft)" }}>{t("home.routesPlanned")}</p>
-          </div>
-        </section>
-        
-        <section className="bento-features">
-          <div className="bento-feature-card">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: 20 }}><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-            <h3>{t("home.f1Title")}</h3>
-            <p>{t("home.f1")}</p>
-          </div>
-          <div className="bento-feature-card">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--good)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: 20 }}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-            <h3>{t("home.f2Title")}</h3>
-            <p>{t("home.f2")}</p>
-          </div>
-          <div className="bento-feature-card">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: 20 }}><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-            <h3>{t("home.f3Title")}</h3>
-            <p>{t("home.f3")}</p>
-          </div>
-        </section>
-
-        <section className="section" style={{ marginBottom: 120 }}>
-          <div style={{ padding: "64px 40px", background: "var(--bg-soft)", borderRadius: 32, textAlign: "center", border: "1px solid var(--border)", boxShadow: "var(--shadow)" }}>
-            <div style={{ maxWidth: 800, margin: "0 auto" }}>
-              <h2 style={{ fontSize: "2.5rem", marginBottom: 24, fontFamily: "'Fraunces', serif" }}>{t("home.aboutUs")}</h2>
-              <p style={{ fontSize: "1.2rem", lineHeight: 1.8, color: "var(--ink-soft)", marginBottom: 40 }}>
-                {t("home.aboutText")}
-              </p>
-              <div className="row" style={{ justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
-                <span style={{ padding: "12px 24px", background: "var(--bg-elev)", borderRadius: 999, fontWeight: 600, border: "1px solid var(--border)", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>{t("home.globalReach")}</span>
-                <span style={{ padding: "12px 24px", background: "var(--bg-elev)", borderRadius: 999, fontWeight: 600, border: "1px solid var(--border)", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>{t("home.verifiedUsers")}</span>
-                <span style={{ padding: "12px 24px", background: "var(--bg-elev)", borderRadius: 999, fontWeight: 600, border: "1px solid var(--border)", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>{t("home.realtimeData")}</span>
-              </div>
+      <section className="section container" style={{ marginTop: 20, marginBottom: 80 }}>
+        <div style={{ padding: "40px", background: "var(--bg-soft)", borderRadius: 24, textAlign: "center" }}>
+          <div style={{ maxWidth: 700, margin: "0 auto" }}>
+            <h2 style={{ fontSize: "2.2rem", marginBottom: 20 }}>{t("home.aboutUs")}</h2>
+            <p style={{ fontSize: "1.1rem", lineHeight: 1.6, color: "var(--muted)", marginBottom: 30 }}>
+              {t("home.aboutText")}
+            </p>
+            <div className="row" style={{ justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
+              <span style={{ padding: "10px 20px", background: "var(--bg)", borderRadius: 999, fontWeight: 600, border: "1px solid color-mix(in srgb, var(--primary) 20%, transparent)" }}>{t("home.globalReach")}</span>
+              <span style={{ padding: "10px 20px", background: "var(--bg)", borderRadius: 999, fontWeight: 600, border: "1px solid color-mix(in srgb, var(--accent) 20%, transparent)" }}>{t("home.verifiedUsers")}</span>
+              <span style={{ padding: "10px 20px", background: "var(--bg)", borderRadius: 999, fontWeight: 600, border: "1px solid color-mix(in srgb, var(--good) 20%, transparent)" }}>{t("home.realtimeData")}</span>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </>
   );
 }
