@@ -9,7 +9,7 @@ import { getSocket } from "./lib/socket";
 
 // Leaflet loaded lazily — only when user visits /planner
 let _leafletLoaded = false;
-let _MapContainer, _TileLayer, _Marker, _Polyline, _Popup, _useMap, _L;
+let RLMapContainer, RLTileLayer, RLMarker, RLPolyline, RLPopup, useRLMap, Leaflet;
 
 async function loadLeaflet() {
   if (_leafletLoaded) return;
@@ -18,20 +18,22 @@ async function loadLeaflet() {
     import("leaflet"),
   ]);
   await import("leaflet/dist/leaflet.css");
-  _MapContainer = RL.MapContainer;
-  _TileLayer = RL.TileLayer;
-  _Marker = RL.Marker;
-  _Polyline = RL.Polyline;
-  _Popup = RL.Popup;
-  _useMap = RL.useMap;
-  _L = L.default;
+  RLMapContainer = RL.MapContainer;
+  RLTileLayer = RL.TileLayer;
+  RLMarker = RL.Marker;
+  RLPolyline = RL.Polyline;
+  RLPopup = RL.Popup;
+  useRLMap = RL.useMap;
+  Leaflet = L.default || L;
   // fix leaflet icon
-  delete _L.Icon.Default.prototype._getIconUrl;
-  _L.Icon.Default.mergeOptions({
-    iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-    iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  });
+  if (Leaflet.Icon && Leaflet.Icon.Default) {
+    delete Leaflet.Icon.Default.prototype._getIconUrl;
+    Leaflet.Icon.Default.mergeOptions({
+      iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+      iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+      shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+    });
+  }
   _leafletLoaded = true;
 }
 
@@ -210,7 +212,7 @@ function RegisterPage() {
 // ─── Planner ───
 // Smoothly animates map to fit the active route
 function FitBounds({ routes, activeId }) {
-  const map = _useMap();
+  const map = useRLMap();
   useEffect(() => {
     const r = routes.find(x => x.id === activeId) || routes[0];
     if (r?.path?.length) {
@@ -422,8 +424,8 @@ function PlannerPage() {
         </div>
         <div>
           <div className="map-wrap">
-            {leafletReady && _MapContainer ? (
-              <_MapContainer
+            {leafletReady && RLMapContainer ? (
+              <RLMapContainer
                 center={center}
                 zoom={6}
                 scrollWheelZoom={true}
@@ -435,7 +437,7 @@ function PlannerPage() {
                 zoomControl={true}
                 attributionControl={false}
               >
-                <_TileLayer
+                <RLTileLayer
                   url={`https://api.tomtom.com/map/1/tile/basic/main/{z}/{x}/{y}.png?key=tVkhz6q997P6azA5OenN78IvCQMLJdu4`}
                   attribution="&copy; TomTom"
                   maxNativeZoom={18}
@@ -446,7 +448,7 @@ function PlannerPage() {
                 />
                 {routes.map(r => (
                   <React.Fragment key={r.id}>
-                    <_Polyline
+                    <RLPolyline
                       positions={r.path}
                       pathOptions={{
                         color: r.id === activeId ? "#d44d2a" : "#aaa",
@@ -458,13 +460,13 @@ function PlannerPage() {
                       eventHandlers={{ click: () => setActiveId(r.id) }}
                     />
                     {r.id === activeId && r.path.length > 0 && (<>
-                      <_Marker position={r.path[0]}><_Popup>{t("planner.start")}: {start}</_Popup></_Marker>
-                      <_Marker position={r.path[r.path.length - 1]}><_Popup>{t("planner.destination")}: {destination}</_Popup></_Marker>
+                      <RLMarker position={r.path[0]}><RLPopup>{t("planner.start")}: {start}</RLPopup></RLMarker>
+                      <RLMarker position={r.path[r.path.length - 1]}><RLPopup>{t("planner.destination")}: {destination}</RLPopup></RLMarker>
                     </>)}
                   </React.Fragment>
                 ))}
                 {routes.length > 0 && <FitBounds routes={routes} activeId={activeId} />}
-              </_MapContainer>
+              </RLMapContainer>
             ) : (
               <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-soft)", borderRadius: 16 }}>
                 <span className="spinner" style={{ width: 28, height: 28, borderWidth: 3 }} />
