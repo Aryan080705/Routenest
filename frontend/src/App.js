@@ -1514,35 +1514,53 @@ function AdminModerationPage() {
   if (!user) return <Navigate to="/login" />;
 
   return (
-    <div className="container">
-      <h1 className="page-title">{t("moderation.title")}</h1>
-      <p className="page-sub">{t("moderation.subtitle")}</p>
-      <div className="card">
+    <div className="container" style={{ maxWidth: 800 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px' }}>
+        <div style={{ background: 'var(--accent-soft)', color: 'var(--accent)', padding: '12px', borderRadius: '16px', fontSize: '28px', display: 'flex' }}>
+          🛡️
+        </div>
+        <div>
+          <h1 className="page-title" style={{ margin: 0 }}>{t("moderation.title")}</h1>
+          <p className="page-sub" style={{ margin: '4px 0 0 0', color: 'var(--ink-soft)' }}>{t("moderation.subtitle")}</p>
+        </div>
+      </div>
+      
+      <div className="card" style={{ marginTop: '24px', padding: reports.length === 0 ? '40px 24px' : '24px' }}>
         {reports.length === 0 ? (
-          <div className="empty">{t("moderation.noPending")}</div>
+          <div className="empty" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '48px', opacity: 0.5 }}>✨</span>
+            <h3 style={{ margin: 0 }}>All caught up!</h3>
+            <p style={{ margin: 0 }}>There are no pending reports to review at this moment.</p>
+          </div>
         ) : (
-          reports.map(r => (
-            <div key={r.id} style={{ borderBottom: "1px solid var(--border)", padding: "16px 0" }}>
-              <div className="row between" style={{ marginBottom: 8 }}>
-                <strong>{t("moderation.reportReason")}: <span style={{ color: "var(--warn)", textTransform: "capitalize" }}>{r.reason.replace("_", " ")}</span></strong>
-                <span className="muted" style={{ fontSize: 13 }}>{t("moderation.reported")}: {new Date(r.reportedAt).toLocaleString()}</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {reports.map(r => (
+              <div key={r.id} style={{ border: "1px solid var(--border)", borderRadius: "16px", padding: "20px", background: "var(--bg)", transition: "transform 0.2s", display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div className="row between">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ background: 'var(--bad)', color: 'white', padding: '4px 10px', borderRadius: '999px', fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      🚨 {r.reason.replace("_", " ")}
+                    </span>
+                    <span className="muted" style={{ fontSize: 13, fontWeight: 500 }}>Reported: {new Date(r.reportedAt).toLocaleString()}</span>
+                  </div>
+                </div>
+                <div style={{ background: "var(--bg-elev)", padding: '16px', borderRadius: '12px', borderLeft: '4px solid var(--accent)', boxShadow: 'var(--shadow)' }}>
+                  {r.post ? (
+                    <>
+                      <h4 style={{ margin: "0 0 8px 0", fontSize: '16px', color: 'var(--ink)' }}>"{r.post.title}"</h4>
+                      <p style={{ margin: 0, color: "var(--ink-soft)", fontSize: '14px', lineHeight: 1.5 }}>{r.post.body}</p>
+                    </>
+                  ) : (
+                    <span className="muted" style={{ fontStyle: 'italic' }}>{t("moderation.postRemoved")}</span>
+                  )}
+                </div>
+                <div className="row" style={{ gap: 12, marginTop: '4px' }}>
+                  <button className="btn" style={{ background: 'var(--bad)', color: 'white', borderColor: 'var(--bad)', flex: 1 }} onClick={() => reviewReport(r.id, "remove")} disabled={busy}>🗑️ {t("moderation.removePost")}</button>
+                  <button className="btn btn-ghost" style={{ flex: 1, border: '1px solid var(--border)' }} onClick={() => reviewReport(r.id, "reject")} disabled={busy}>✅ {t("moderation.rejectReport")}</button>
+                </div>
               </div>
-              <div style={{ background: "var(--bg-soft)", padding: 12, borderRadius: 8, marginBottom: 12 }}>
-                {r.post ? (
-                  <>
-                    <h4 style={{ margin: "0 0 8px 0" }}>{r.post.title}</h4>
-                    <p style={{ margin: 0, color: "var(--ink-soft)" }}>{r.post.body}</p>
-                  </>
-                ) : (
-                  <span className="muted">{t("moderation.postRemoved")}</span>
-                )}
-              </div>
-              <div className="row" style={{ gap: 10 }}>
-                <button className="btn btn-primary" onClick={() => reviewReport(r.id, "remove")} disabled={busy}>{t("moderation.removePost")}</button>
-                <button className="btn btn-ghost" onClick={() => reviewReport(r.id, "reject")} disabled={busy}>{t("moderation.rejectReport")}</button>
-              </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
     </div>
