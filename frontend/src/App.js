@@ -688,6 +688,7 @@ function CommunityPage() {
   const { t } = useI18n(); const { user } = useAuth(); const toast = useToast();
   const [posts, setPosts] = useState([]); const [tab, setTab] = useState("latest"); const [showNew, setShowNew] = useState(false);
   const [np, setNp] = useState({ title: "", body: "", topic: "travel-tips", photo: "" });
+  const [posting, setPosting] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editDraft, setEditDraft] = useState({ title: "", body: "", topic: "travel-tips", photo: "" });
 
@@ -711,8 +712,10 @@ function CommunityPage() {
     if (!user) { toast(t("community.verifiedOnly"), "error"); return; }
     if (!user?.verified) { toast("Please verify your account to access this feature.", "error"); return; }
     if (!np.title || !np.body) { toast(t("errors.required"), "error"); return; }
+    setPosting(true);
     try { await api.post("/api/community", np); toast(t("success.posted")); setShowNew(false); setNp({ title: "", body: "", topic: "travel-tips", photo: "" }); load(); }
     catch (err) { toast(err.response?.data?.detail || err.response?.data?.error || t("errors.network"), "error"); }
+    finally { setPosting(false); }
   };
   const isPast24h = (p) => (Date.now() - new Date(p.createdAt).getTime()) > 24 * 3600 * 1000;
   const startEdit = (p) => {
@@ -800,7 +803,20 @@ function CommunityPage() {
                   const file = e.target.files[0];
                   if (file) {
                     const reader = new FileReader();
-                    reader.onloadend = () => setNp({ ...np, photo: reader.result });
+                    reader.onloadend = () => {
+                      const img = new Image();
+                      img.onload = () => {
+                        const canvas = document.createElement("canvas");
+                        const MAX_WIDTH = 800;
+                        const scale = img.width > MAX_WIDTH ? MAX_WIDTH / img.width : 1;
+                        canvas.width = img.width * scale;
+                        canvas.height = img.height * scale;
+                        const ctx = canvas.getContext("2d");
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        setNp({ ...np, photo: canvas.toDataURL("image/jpeg", 0.6) });
+                      };
+                      img.src = reader.result;
+                    };
                     reader.readAsDataURL(file);
                   }
                 }} 
@@ -808,7 +824,7 @@ function CommunityPage() {
               />
               {np.photo && <img src={np.photo} alt="Preview" style={{ marginTop: 10, maxWidth: "100%", maxHeight: 200, borderRadius: 8, objectFit: "cover" }} />}
             </div>
-            <button className="btn btn-primary" onClick={create} data-testid="np-submit">{t("community.post")}</button>
+            <button className="btn btn-primary" onClick={create} disabled={posting} data-testid="np-submit">{posting ? "..." : t("community.post")}</button>
           </div>
         )}
         {posts.length === 0 ? <div className="empty">{t("community.noPosts")}</div> : posts.map((p, idx) => {
