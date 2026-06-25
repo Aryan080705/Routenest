@@ -71,7 +71,16 @@ const addMockData = () => {
     { name: 'Kunal Kapoor', title: 'Best route for Bangalore to Ooty', body: 'Should I take the Mysore road or the Kanakapura road? Heard Mysore road is full of diversions.', topic: 'questions', photo: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=600&q=80' },
     { name: 'Aarti Desai', title: 'Monsoon driving tips', body: 'Always check your wiper blades and tires before a monsoon trip. The western ghats can get very slippery.', topic: 'travelogues', photo: 'https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?auto=format&fit=crop&w=600&q=80' },
     { name: 'Varun Dhawan', title: 'Heavy rain on Mumbai-Pune Expressway', body: 'It is pouring heavily on the expressway. Traffic is moving very slowly near Lonavala.', topic: 'alerts', photo: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=600&q=80' },
-    { name: 'Megha Reddy', title: 'Must-visit cafe in Pondicherry', body: 'If you are driving to Pondi, do not miss the Coromandel Cafe. Their desserts are out of this world!', topic: 'food', photo: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80' }
+    { name: 'Megha Reddy', title: 'Must-visit cafe in Pondicherry', body: 'If you are driving to Pondi, do not miss the Coromandel Cafe. Their desserts are out of this world!', topic: 'food', photo: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80' },
+    { name: 'Ravi Teja', title: 'Road works near Vapi?', body: 'Is the flyover construction near Vapi on NH48 finished?', topic: 'nh48', photo: null },
+    { name: 'Sonal Desai', title: 'Best food stops on NH48', body: 'Which dhabas are currently open at night between Delhi and Jaipur?', topic: 'nh48', photo: null },
+    { name: 'Vikas Sharma', title: 'Speed limits updated', body: 'Just a heads up, the speed limit has been strictly enforced near the Yamuna Expressway toll.', topic: 'yamuna-expressway', photo: null },
+    { name: 'Ankita Singh', title: 'Fog conditions this week', body: 'Visibility is extremely poor in the mornings on the expressway. Drive safe!', topic: 'yamuna-expressway', photo: null },
+    { name: 'Rohit K', title: 'What to pack for Spiti?', body: 'Can someone share a packing list for a Spiti Valley trip in October?', topic: 'packing', photo: null },
+    { name: 'Priya M', title: 'Tire pressure check', body: 'Always ensure your spare tire is inflated properly before leaving the city.', topic: 'vehicle-prep', photo: null },
+    { name: 'Sunil C', title: 'Hidden beaches in South Goa', body: 'Cola beach is a must visit, completely empty and pristine!', topic: 'goa', photo: null },
+    { name: 'Megha Reddy', title: 'Best shacks in Anjuna', body: 'Curlies and Shiva Valley are classics, but try the new ones on the north side.', topic: 'goa', photo: null },
+    { name: 'Kunal P', title: 'Snow in December?', body: 'When does the first snowfall usually happen in Manali? Planning a Christmas trip.', topic: 'manali', photo: null }
   ];
 
   dummyData.forEach((d, i) => {
@@ -88,6 +97,13 @@ const addMockData = () => {
       comments: [],
       createdAt: new Date(Date.now() - i * 3600000).toISOString(),
       verified: true
+    });
+  });
+
+  // Update forum topics counts based on initial posts
+  store.forums.forEach(f => {
+    f.topics.forEach(t => {
+      t.postsCount = store.posts.filter(p => p.topic === t.slug).length;
     });
   });
 
