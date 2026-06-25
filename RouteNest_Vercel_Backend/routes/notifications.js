@@ -18,20 +18,25 @@ function emitUnread(req, userId) {
 function simulateEmail(store, userId, notification) {
   const user = (store.users || []).find((u) => u.id === userId);
   const email = user?.email || `user-${userId}@routenest.app`;
+  const isFail = Math.random() < 0.2; // 20% chance to fail for testing retry
   const logEntry = {
     id: nextId(store.deliveryLogs),
     notificationId: notification.id,
     userId,
     channel: "email",
-    status: "delivered",
+    status: isFail ? "failed" : "delivered",
     sentAt: new Date().toISOString(),
-    deliveredAt: new Date().toISOString(),
-    failureReason: null,
+    deliveredAt: isFail ? null : new Date().toISOString(),
+    failureReason: isFail ? "SMTP Connection Timeout" : null,
     retryCount: 0,
     meta: { to: email, subject: notification.title },
   };
   store.deliveryLogs.push(logEntry);
-  console.log(`📧 EMAIL SENT → ${email} | Subject: "${notification.title}" | Body: "${notification.body.slice(0, 60)}..."`);
+  if (isFail) {
+    console.log(`❌ EMAIL FAILED → ${email} | Subject: "${notification.title}"`);
+  } else {
+    console.log(`📧 EMAIL SENT → ${email} | Subject: "${notification.title}"`);
+  }
   return logEntry;
 }
 
@@ -247,6 +252,11 @@ router.post("/send", async (req, res) => {
   const store = getStore();
   store.deliveryLogs = store.deliveryLogs || [];
 
+  const pref = store.userNotificationPreferences?.find((x) => x.userId === parseInt(userId));
+  if (pref && pref.notificationTypes && pref.notificationTypes[type] === false) {
+    return res.status(200).json({ message: "Blocked by user preferences", blocked: true });
+  }
+
   const notification = {
     id: nextId(store.notificationHistory),
     userId: parseInt(userId), type, title, body,
@@ -255,7 +265,10 @@ router.post("/send", async (req, res) => {
   };
   store.notificationHistory.push(notification);
 
-  const activeChannels = channels || ["push"];
+  let activeChannels = channels || ["push"];
+  if (pref && pref.channels) {
+    activeChannels = activeChannels.filter(ch => pref.channels[ch] !== false);
+  }
   const deliveryResults = [];
 
   // Email simulation

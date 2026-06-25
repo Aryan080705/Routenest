@@ -1165,13 +1165,12 @@ function NotificationsPage() {
         userId: user.id, type: preset.key, title: preset.title, body: preset.body,
         channels: ["email", "push", "inApp"],
       });
-      // Show email delivery confirmation
-      if (res.data?.delivery) {
+      if (res.data?.blocked) {
+        toast(`🔇 Notification blocked by your preferences.`, "info");
+      } else if (res.data?.delivery) {
         const emailDelivery = res.data.delivery.find(d => d.channel === "email");
         if (emailDelivery) {
-          const entry = { title: preset.title, time: new Date().toLocaleTimeString(), status: emailDelivery.status };
-          setEmailLog(prev => [entry, ...prev].slice(0, 5));
-          toast(`📧 Email sent: ${preset.title}`, "info");
+          toast(emailDelivery.status === "failed" ? `❌ Email delivery failed: ${preset.title}` : `📧 Email sent: ${preset.title}`, emailDelivery.status === "failed" ? "error" : "info");
         }
       }
       // Show browser push notification if enabled
@@ -1326,15 +1325,30 @@ function NotificationsPage() {
         )}
       </div>
 
-      {/* ── Email Log ── */}
-      {emailLog.length > 0 && (
+      {/* ── Delivery Logs ── */}
+      {logs.length > 0 && (
         <div className="card" style={{ marginTop: 16 }}>
-          <h4 style={{ marginTop: 0, marginBottom: 10 }}>📧 Email Delivery Log</h4>
-          {emailLog.map((e, i) => (
-            <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderTop: i > 0 ? "1px solid var(--border)" : "none", fontSize: 13 }}>
-              <span>{e.title}</span>
-              <span style={{ color: "var(--ink-soft)" }}>{e.time}</span>
-              <span style={{ color: "var(--good)" }}>✅ {e.status}</span>
+          <div className="row between" style={{ marginBottom: 10, alignItems: "center" }}>
+            <h4 style={{ margin: 0 }}>📊 Delivery Status Logs</h4>
+            <button className="btn btn-ghost" onClick={() => setLogsOpen(!logsOpen)} data-testid="toggle-logs">{logsOpen ? "Hide" : "Show"}</button>
+          </div>
+          {logsOpen && logs.map((log) => (
+            <div key={log.id} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderTop: "1px solid var(--border)", fontSize: 13 }} data-testid={`log-${log.id}`}>
+              <div>
+                <strong>{log.channel.toUpperCase()}</strong>: {log.meta?.subject || "In-App"}
+                <div className="muted" style={{ fontSize: 12 }}>{new Date(log.sentAt).toLocaleString()}</div>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                {log.status === "failed" ? (
+                  <>
+                    <span style={{ color: "var(--warn)" }}>❌ Failed</span>
+                    <br />
+                    <button className="btn" style={{ fontSize: 11, padding: "2px 6px", marginTop: 4 }} onClick={() => retryLog(log.id)} data-testid={`retry-${log.id}`}>↻ Retry</button>
+                  </>
+                ) : (
+                  <span style={{ color: "var(--good)" }}>✅ Delivered {log.retryCount > 0 && `(after ${log.retryCount} retries)`}</span>
+                )}
+              </div>
             </div>
           ))}
         </div>
