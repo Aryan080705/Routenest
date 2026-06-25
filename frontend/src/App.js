@@ -767,7 +767,7 @@ function CommunityPage() {
       
       const shareUrl = url.includes("localhost") ? "https://routenest.vercel.app" : url;
       const links = { 
-        twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent("Check out this journey: " + text)}`, 
+        twitter: `https://twitter.com/share?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent("Check out this journey: " + text)}`, 
         facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, 
         whatsapp: `https://wa.me/?text=${encodeURIComponent("Check out this journey: " + text + " " + shareUrl)}`, 
         instagram: `https://www.instagram.com/?url=${encodeURIComponent(shareUrl)}` 
