@@ -87,7 +87,6 @@ router.post("/", (req, res) => {
   const user = userId ? users.find((u) => u.id === userId) : null;
   
   if (!user) return res.status(401).json({ error: "Unauthorized. Please log in." });
-  if (!user.verified) return res.status(403).json({ error: "Only verified users can submit reviews." });
 
   const body = req.body;
   if (!body.completedJourney) return res.status(403).json({ error: "Reviews are allowed only after a completed journey." });
