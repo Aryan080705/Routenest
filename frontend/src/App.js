@@ -818,7 +818,7 @@ function CommunityPage() {
             <div className="post-head">
               <div className="avatar-fallback" data-testid={`post-avatar-${p.id}`}>{(p.author || "?").trim().split(" ").map(s => s[0]).join("").slice(0, 2).toUpperCase()}</div>
               <div style={{ flex: 1 }}>
-                <div><strong data-testid={`post-author-${p.id}`}>{p.author}</strong> {p.verified && <span className="verified-badge" title="Verified User">✓</span>}</div>
+                <div><strong data-testid={`post-author-${p.id}`}>{p.author}</strong> {p.verified && <span className="verified-badge" title="Verified User">⭐</span>}</div>
                 <div className="post-meta" data-testid={`post-time-${p.id}`}>{new Date(p.createdAt).toLocaleString()}{p.updatedAt && ` · edited`}</div>
               </div>
               <span className="post-topic" data-testid={`post-topic-${p.id}`}>{topicLabel(p.topic)}</span>
@@ -997,7 +997,7 @@ function ReviewsPage() {
               <div className="avatar-fallback">{r.user[0]}</div>
               <div style={{ flex: 1 }}>
                 <strong data-testid={`review-user-${r.id}`}>{r.user}</strong>{" "}
-                {r.verified && <span className="verified-badge" title="Verified User">✓</span>}{" "}
+                {r.verified && <span className="verified-badge" title="Verified User">⭐</span>}{" "}
                 {r.trustedReviewer && (
                   <span data-testid={`review-trusted-${r.id}`} title="Trusted Reviewer" style={{ display: "inline-flex", alignItems: "center", gap: 4, marginLeft: 6, padding: "2px 8px", borderRadius: 999, background: "color-mix(in srgb, var(--warn) 18%, transparent)", color: "var(--warn)", fontSize: 11, fontWeight: 700 }}>⭐ Trusted</span>
                 )}
@@ -1312,7 +1312,7 @@ function NotificationsPage() {
 
 // ─── Profile ───
 function ProfilePage() {
-  const { t } = useI18n(); const { user } = useAuth();
+  const { t } = useI18n(); const { user, reloadUser } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -1338,6 +1338,7 @@ function ProfilePage() {
       await api.post(`/api/profiles/${user.id}/verify`);
       toast(t("success.verified"));
       loadProfile();
+      if (reloadUser) reloadUser();
     } catch {
       toast(t("errors.verificationFailed"), "error");
     } finally {
@@ -1370,7 +1371,7 @@ function ProfilePage() {
           <div>
             <h1 style={{ margin: 0, fontFamily: "Fraunces, serif" }}>
               {profile.name}{" "}
-              {profile.verified && <span className="verified-badge" title="Verified User" style={{ width: 22, height: 22, fontSize: 14 }}>✓</span>}
+              {profile.verified && <span className="verified-badge" title="Verified User" style={{ width: 22, height: 22, fontSize: 14 }}>⭐</span>}
               {!profile.verified && user?.id === profile.userId && (
                 <button className="btn btn-primary" onClick={requestVerification} disabled={busy} style={{ fontSize: 12, padding: "4px 10px", marginLeft: 10, verticalAlign: "middle" }}>
                   {busy ? "..." : "Request Verification"}

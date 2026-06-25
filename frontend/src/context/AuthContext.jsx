@@ -39,6 +39,15 @@ export function AuthProvider({ children }) {
     localStorage.setItem("token", r.data.token); setUser(r.data.user); applyServerPrefs(r.data.user); joinUserRoom(r.data.token); return r.data.user;
   }, []);
   const logout = useCallback(() => { leaveUserRoom(); localStorage.removeItem("token"); setUser(null); }, []);
-  return <Ctx.Provider value={{ user, loading, login, register, logout }}>{children}</Ctx.Provider>;
+  const reloadUser = useCallback(async () => {
+    const t = localStorage.getItem("token");
+    if (!t) return;
+    try {
+      const r = await api.get("/api/auth/me");
+      setUser(r.data.user);
+      applyServerPrefs(r.data.user);
+    } catch {}
+  }, []);
+  return <Ctx.Provider value={{ user, loading, login, register, logout, reloadUser }}>{children}</Ctx.Provider>;
 }
 export const useAuth = () => useContext(Ctx);
