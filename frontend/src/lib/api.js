@@ -1,5 +1,7 @@
 import axios from "axios";
-const baseURL = process.env.REACT_APP_API_URL || process.env.REACT_APP_BACKEND_URL || "";
+const baseURL = process.env.NODE_ENV === "production" 
+  ? (process.env.REACT_APP_API_URL || process.env.REACT_APP_BACKEND_URL || "")
+  : (process.env.REACT_APP_BACKEND_URL || "");
 export const api = axios.create({ baseURL });
 api.interceptors.request.use((c) => {
   const t = localStorage.getItem("token");

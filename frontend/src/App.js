@@ -6,7 +6,7 @@ import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { api } from "./lib/api";
 import { getSocket } from "./lib/socket";
-import { Dialog, DialogContent, DialogTrigger } from "./components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "./components/ui/dialog";
 
 // Leaflet loaded lazily — only when user visits /planner
 let _leafletLoaded = false;
@@ -77,6 +77,7 @@ function AuthModal({ trigger, defaultMode = "login" }) {
         {trigger}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]" style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "16px", padding: "24px" }}>
+        <DialogTitle style={{ display: "none" }}>{mode === "login" ? "Login" : "Sign up"}</DialogTitle>
         <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
           <button type="button" className={`btn ${mode === "login" ? "btn-primary" : "btn-ghost"}`} style={{ flex: 1 }} onClick={() => setMode("login")}>{t("auth.login")}</button>
           <button type="button" className={`btn ${mode === "register" ? "btn-primary" : "btn-ghost"}`} style={{ flex: 1 }} onClick={() => setMode("register")}>{t("auth.register")}</button>
