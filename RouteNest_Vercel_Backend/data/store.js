@@ -16,7 +16,8 @@ const initialData = () => ({
   notificationHistory: [],
   notificationQueue: [],
   deliveryLogs: [],
-  notifications: []
+  notifications: [],
+  moderationQueue: []
 });
 
 /* ── live store ─────────────────────────────────────────────── */
