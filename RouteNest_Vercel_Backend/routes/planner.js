@@ -163,7 +163,11 @@ async function buildORSRoutes(start, destination, waypoints = []) {
       recIdx = i;
     }
   }
-  payloads.forEach((p, i) => { p.recommended = i === recIdx; });
+  const waypointCoords = coords.slice(1, -1).map(([lon, lat]) => [lat, lon]);
+  payloads.forEach((p, i) => { 
+    p.recommended = i === recIdx; 
+    p.waypoints = waypointCoords;
+  });
   
   routeCache.set(cacheKey, payloads);
   return payloads;

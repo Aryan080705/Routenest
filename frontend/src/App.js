@@ -555,14 +555,17 @@ function PlannerPage() {
                   updateWhenIdle={true}
                   updateWhenZooming={false}
                 />
-                {routes.map(r => (
+                {routes.map((r, i) => {
+                  const colors = ["#d44d2a", "#2a8bd4", "#2ad47a"];
+                  const routeColor = colors[i % colors.length];
+                  return (
                   <React.Fragment key={r.id}>
                     <RLPolyline
                       positions={r.path}
                       pathOptions={{
-                        color: r.id === activeId ? "#d44d2a" : "#aaa",
-                        weight: r.id === activeId ? 6 : 3,
-                        opacity: r.id === activeId ? 1 : 0.5,
+                        color: routeColor,
+                        weight: r.id === activeId ? 6 : 4,
+                        opacity: r.id === activeId ? 1 : 0.4,
                         lineCap: "round",
                         lineJoin: "round",
                       }}
@@ -570,10 +573,13 @@ function PlannerPage() {
                     />
                     {r.id === activeId && r.path.length > 0 && (<>
                       <RLMarker position={r.path[0]}><RLPopup>{t("planner.start")}: {start}</RLPopup></RLMarker>
+                      {r.waypoints && r.waypoints.map((wp, wIdx) => (
+                        <RLMarker key={`wp-${wIdx}`} position={wp}><RLPopup>Waypoint {wIdx + 1}</RLPopup></RLMarker>
+                      ))}
                       <RLMarker position={r.path[r.path.length - 1]}><RLPopup>{t("planner.destination")}: {destination}</RLPopup></RLMarker>
                     </>)}
                   </React.Fragment>
-                ))}
+                )})}
                 {routes.length > 0 && <FitBounds routes={routes} activeId={activeId} />}
               </RLMapContainer>
             ) : (
