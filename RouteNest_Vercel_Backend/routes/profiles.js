@@ -49,7 +49,7 @@ router.get("/:userId", (req, res) => {
 
   res.json({
     ...profile,
-    recentPosts: userPosts.slice(0, 5),
+    recentPosts: userPosts,
     engagementStats,
     postCount: userPosts.length
   });

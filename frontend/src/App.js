@@ -861,7 +861,6 @@ function CommunityPage() {
               <button className="action-btn" onClick={() => { navigator.clipboard.writeText(window.location.origin + `/community#post-${p.id}`); toast("Link copied!"); }} data-testid={`share-copy-${p.id}`}>📋 Copy Link</button>
               {user && <button className="action-btn" onClick={() => report(p)} data-testid={`report-${p.id}`}>⚑ {t("community.report")}</button>}
               {user && p.authorId === user.id && editingId !== p.id && !isPast24h(p) && <button className="action-btn" onClick={() => startEdit(p)} data-testid={`edit-${p.id}`}>✎ {t("reviews.edit")}</button>}
-              {user && p.authorId === user.id && isPast24h(p) && <span className="action-btn" style={{ opacity: 0.4, cursor: "not-allowed" }} title={t("common.editLockedTitle")}>🔒 {t("common.editLocked")}</span>}
               {user && p.authorId === user.id && <button className="action-btn btn-danger" onClick={() => del(p)} data-testid={`delete-${p.id}`}>{t("community.delete")}</button>}
             </div>
             <CommentBlock post={p} onChange={load} />
@@ -1105,7 +1104,6 @@ function ReviewsPage() {
             <div className="row" style={{ gap: 6, flexWrap: "wrap" }}>
               <button className="action-btn" onClick={() => helpful(r)} data-testid={`rev-helpful-${r.id}`}>👍 {t("reviews.helpful")} ({r.helpful})</button>
               {canEdit(r) && !isPast24h(r) && editing !== r.id && <button className="action-btn" onClick={() => { setEditing(r.id); setEditText(r.text); setEditRating(r.rating); }} data-testid={`rev-edit-${r.id}`}>{t("reviews.edit")}</button>}
-              {canEdit(r) && isPast24h(r) && editing !== r.id && <span className="action-btn" style={{ opacity: 0.4, cursor: "not-allowed" }} title={t("common.editLockedTitle")}>🔒 {t("common.editLocked")}</span>}
               <button className="action-btn" onClick={() => report(r)} data-testid={`rev-report-${r.id}`}>⚑ {t("reviews.reportR")}</button>
             </div>
           </div>
