@@ -91,6 +91,7 @@ function AuthModal({ trigger, defaultMode = "login" }) {
         </form>
       </DialogContent>
     </Dialog>
+  );
 }
 
 // ─── Header ───
