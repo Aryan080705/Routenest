@@ -1220,12 +1220,12 @@ function NotificationsPage() {
   const [emailLog, setEmailLog] = useState([]); // simulated email log
 
   const SIM_PRESETS = [
-    { key: "booking", label: "Simulate Booking", icon: "✓", title: "Booking Confirmed ✓", body: "Test: Your bus booking has been confirmed. Booking ID: #TEST-" + Math.floor(Math.random() * 9999) },
-    { key: "cancellation", label: "Simulate Cancellation", icon: "❌", title: "Booking Cancelled ❌", body: "Test: Your bus booking has been cancelled. Refund will be processed within 3-5 days." },
-    { key: "scheduleChange", label: "Simulate Delay", icon: "⚠️", title: "Schedule Update ⚠️", body: "Test: Your bus is now delayed by 12 minutes." },
-    { key: "journeyReminder", label: "Simulate Reminder", icon: "🚌", title: "Journey Reminder 🚌", body: "Test: Your bus departs in 30 minutes. Head to the boarding gate." },
-    { key: "promotional", label: "Simulate Offer", icon: "🎉", title: "Special Offer 🎉", body: "Test: 20% off all routes this week. Code: TEST20" },
-    { key: "offers", label: "Simulate Discount", icon: "💰", title: "Flash Discount 💰", body: "Test: 50% off on Ahmedabad to Mumbai route. Limited seats — book now!" },
+    { key: "booking", label: t("notifications.simBookingLabel"), icon: "✓", title: t("notifications.simBookingTitle"), body: t("notifications.simBookingBody") },
+    { key: "cancellation", label: t("notifications.simCancelLabel"), icon: "❌", title: t("notifications.simCancelTitle"), body: t("notifications.simCancelBody") },
+    { key: "scheduleChange", label: t("notifications.simScheduleLabel"), icon: "⚠️", title: t("notifications.simScheduleTitle"), body: t("notifications.simScheduleBody") },
+    { key: "journeyReminder", label: t("notifications.simReminderLabel"), icon: "🚌", title: t("notifications.simReminderTitle"), body: t("notifications.simReminderBody") },
+    { key: "promotional", label: t("notifications.simPromoLabel"), icon: "🎉", title: t("notifications.simPromoTitle"), body: t("notifications.simPromoBody") },
+    { key: "offers", label: t("notifications.simOffersLabel"), icon: "💰", title: t("notifications.simOffersTitle"), body: t("notifications.simOffersBody") },
   ];
 
   const simulate = async (preset) => {
