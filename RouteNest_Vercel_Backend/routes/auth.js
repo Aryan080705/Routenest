@@ -38,6 +38,7 @@ router.post("/register", (req, res) => {
     email: normalized,
     password: String(password),
     verified: false, // Default unverified so they must verify
+    trustedReviewer: false,
     theme: null,
     language: null,
     createdAt: new Date().toISOString()
@@ -51,6 +52,7 @@ router.post("/register", (req, res) => {
     name: user.name,
     email: user.email,
     verified: false,
+    trustedReviewer: false,
     bio: "",
     // Fallback to initials avatar to avoid incorrect boy/girl photos
     avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff`,
@@ -86,6 +88,7 @@ router.post("/login", (req, res) => {
       email: normalized,
       password: String(password),
       verified: true,
+      trustedReviewer: false,
       theme: null,
       language: null,
       createdAt: new Date().toISOString()
@@ -93,6 +96,7 @@ router.post("/login", (req, res) => {
     users.push(user);
     userProfiles.push({
       id: newId, userId: newId, name: user.name, email: user.email, verified: true,
+      trustedReviewer: false,
       bio: "", avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff`,
       totalPosts: 0, totalLikes: 0, followersCount: 0, joinedAt: user.createdAt, badges: [], socialLinks: {}
     });
