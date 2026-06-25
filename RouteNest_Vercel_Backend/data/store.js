@@ -83,8 +83,13 @@ const addMockData = () => {
     { name: 'Kunal P', title: 'Snow in December?', body: 'When does the first snowfall usually happen in Manali? Planning a Christmas trip.', topic: 'manali', photo: null }
   ];
 
+  // Like counts for posts: top posts get most likes for trending
+  const likeCounts = [42, 38, 31, 27, 22, 18, 15, 12, 9, 7, 5, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
   dummyData.forEach((d, i) => {
     store.users.push({ id: 1000 + i, name: d.name, email: `dummy${i}@example.com`, verified: true });
+    // Generate fake user IDs for likes
+    const fakeLikes = Array.from({ length: likeCounts[i] || 0 }, (_, j) => 2000 + i * 50 + j);
     store.posts.push({
       id: 1000 + i,
       authorId: 1000 + i,
@@ -93,7 +98,7 @@ const addMockData = () => {
       body: d.body,
       photo: d.photo,
       topic: d.topic,
-      likes: [],
+      likes: fakeLikes,
       comments: [],
       createdAt: new Date(Date.now() - i * 3600000).toISOString(),
       verified: true
