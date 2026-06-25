@@ -766,9 +766,9 @@ function CommunityPage() {
       }
       
       const links = { 
-        twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, 
+        twitter: `https://x.com/intent/tweet?text=${encodeURIComponent(text + " " + url)}`, 
         facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, 
-        whatsapp: `https://wa.me/?text=${encodeURIComponent(text)}%20${encodeURIComponent(url)}`, 
+        whatsapp: `https://wa.me/?text=${encodeURIComponent(text + " " + url)}`, 
         instagram: `https://www.instagram.com/?url=${encodeURIComponent(url)}` 
       };
       if (links[platform]) window.open(links[platform], "_blank");
