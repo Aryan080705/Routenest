@@ -765,14 +765,22 @@ function CommunityPage() {
         return;
       }
       
+      const postTitle = p.title || "";
+      const postBody = p.body ? (p.body.length > 100 ? p.body.substring(0, 100) + "..." : p.body) : "";
+      const hashtags = "#RouteNest #Travel #BusJourney #TravelCommunity";
+      
       const shareUrl = url.includes("localhost") ? "https://routenest.vercel.app" : url;
+      
+      const twitterText = `${postTitle}\n\n${postBody}\n\n${hashtags}`;
+      const whatsappText = `Check out this journey on RouteNest!\n\n*${postTitle}*\n${postBody}\n\n${shareUrl}`;
+
       const links = { 
-        twitter: `https://twitter.com/share?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent("Check out this journey: " + text)}`, 
+        twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterText)}&url=${encodeURIComponent(shareUrl)}`, 
         facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, 
-        whatsapp: `https://wa.me/?text=${encodeURIComponent("Check out this journey: " + text + " " + shareUrl)}`, 
+        whatsapp: `https://wa.me/?text=${encodeURIComponent(whatsappText)}`, 
         instagram: `https://www.instagram.com/?url=${encodeURIComponent(shareUrl)}` 
       };
-      if (links[platform]) window.open(links[platform], "_blank");
+      if (links[platform]) window.open(links[platform], "_blank", "noopener,noreferrer");
     } catch { toast(t("errors.network"), "error"); }
   };
   const del = async (p) => { if (!window.confirm(t("community.delete") + "?")) return; await api.delete(`/api/community/${p.id}`); load(); };
