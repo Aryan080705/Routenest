@@ -718,6 +718,13 @@ function CommunityPage() {
     finally { setPosting(false); }
   };
   const isPast24h = (p) => (Date.now() - new Date(p.createdAt).getTime()) > 24 * 3600 * 1000;
+  const timeLeft24h = (p) => {
+    const ms = 24 * 3600 * 1000 - (Date.now() - new Date(p.createdAt).getTime());
+    if (ms <= 0) return null;
+    const h = Math.floor(ms / 3600000);
+    const m = Math.floor((ms % 3600000) / 60000);
+    return `${h}h ${m}m left to edit`;
+  };
   const startEdit = (p) => {
     if (isPast24h(p)) { toast(t("errors.editLocked"), "error"); return; }
     setEditingId(p.id); setEditDraft({ title: p.title, body: p.body, topic: p.topic, photo: p.photo || "" });
@@ -877,6 +884,8 @@ function CommunityPage() {
               <button className="action-btn" onClick={() => { navigator.clipboard.writeText(window.location.origin + `/community#post-${p.id}`); toast("Link copied!"); }} data-testid={`share-copy-${p.id}`}>📋 Copy Link</button>
               {user && <button className="action-btn" onClick={() => report(p)} data-testid={`report-${p.id}`}>⚑ {t("community.report")}</button>}
               {user && p.authorId === user.id && editingId !== p.id && !isPast24h(p) && <button className="action-btn" onClick={() => startEdit(p)} data-testid={`edit-${p.id}`}>✎ {t("reviews.edit")}</button>}
+              {user && p.authorId === user.id && !isPast24h(p) && timeLeft24h(p) && <span className="muted" style={{ fontSize: 11, background: "var(--bg-soft)", padding: "4px 8px", borderRadius: 6 }} data-testid={`edit-timer-${p.id}`}>⏱ {timeLeft24h(p)}</span>}
+              {user && p.authorId === user.id && isPast24h(p) && <span className="muted" style={{ fontSize: 11, background: "var(--bg-soft)", padding: "4px 8px", borderRadius: 6, opacity: 0.6 }}>🔒 Edit window closed</span>}
               {user && p.authorId === user.id && <button className="action-btn btn-danger" onClick={() => del(p)} data-testid={`delete-${p.id}`}>{t("community.delete")}</button>}
             </div>
             <CommentBlock post={p} onChange={load} />
@@ -1061,6 +1070,13 @@ function ReviewsPage() {
   };
   const canEdit = (r) => user && (r.userId === user.id || r.user === user.name);
   const isPast24h = (r) => (Date.now() - new Date(r.createdAt).getTime()) > 24 * 3600 * 1000;
+  const timeLeft24h = (r) => {
+    const ms = 24 * 3600 * 1000 - (Date.now() - new Date(r.createdAt).getTime());
+    if (ms <= 0) return null;
+    const h = Math.floor(ms / 3600000);
+    const m = Math.floor((ms % 3600000) / 60000);
+    return `${h}h ${m}m left to edit`;
+  };
   const Stars = ({ n }) => <span className="stars">{"★".repeat(n)}{"☆".repeat(5 - n)}</span>;
 
   return (
@@ -1120,6 +1136,8 @@ function ReviewsPage() {
             <div className="row" style={{ gap: 6, flexWrap: "wrap" }}>
               <button className="action-btn" onClick={() => helpful(r)} data-testid={`rev-helpful-${r.id}`}>👍 {t("reviews.helpful")} ({r.helpful})</button>
               {canEdit(r) && !isPast24h(r) && editing !== r.id && <button className="action-btn" onClick={() => { setEditing(r.id); setEditText(r.text); setEditRating(r.rating); }} data-testid={`rev-edit-${r.id}`}>{t("reviews.edit")}</button>}
+              {canEdit(r) && !isPast24h(r) && timeLeft24h(r) && <span className="muted" style={{ fontSize: 11, background: "var(--bg-soft)", padding: "4px 8px", borderRadius: 6 }} data-testid={`rev-timer-${r.id}`}>⏱ {timeLeft24h(r)}</span>}
+              {canEdit(r) && isPast24h(r) && <span className="muted" style={{ fontSize: 11, background: "var(--bg-soft)", padding: "4px 8px", borderRadius: 6, opacity: 0.6 }}>🔒 Edit locked</span>}
               <button className="action-btn" onClick={() => report(r)} data-testid={`rev-report-${r.id}`}>⚑ {t("reviews.reportR")}</button>
             </div>
           </div>
