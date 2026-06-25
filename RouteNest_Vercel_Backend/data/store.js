@@ -7,7 +7,41 @@
 const initialData = () => ({
   userProfiles: [],
   posts: [],
-  forums: [],
+  forums: [
+    {
+      id: 1,
+      slug: 'routes',
+      title: 'Route Discussions',
+      description: 'Discuss specific routes, conditions, and alternate paths.',
+      emoji: '🛣️',
+      topics: [
+        { id: 101, slug: 'nh48', title: 'NH48 (Delhi - Mumbai)', description: 'Updates and conditions on NH48.', postsCount: 0, lastActivityAt: new Date().toISOString() },
+        { id: 102, slug: 'yamuna-expressway', title: 'Yamuna Expressway', description: 'Weather and traffic updates.', postsCount: 0, lastActivityAt: new Date().toISOString() }
+      ]
+    },
+    {
+      id: 2,
+      slug: 'destinations',
+      title: 'Destinations',
+      description: 'Recommendations and tips for places to visit.',
+      emoji: '🗺️',
+      topics: [
+        { id: 201, slug: 'goa', title: 'Goa', description: 'Best places, food, and stays.', postsCount: 0, lastActivityAt: new Date().toISOString() },
+        { id: 202, slug: 'manali', title: 'Manali', description: 'Hill station vibes, snow, and trekking.', postsCount: 0, lastActivityAt: new Date().toISOString() }
+      ]
+    },
+    {
+      id: 3,
+      slug: 'travel-tips',
+      title: 'Travel Advice',
+      description: 'General advice for road trips and traveling.',
+      emoji: '✈️',
+      topics: [
+        { id: 301, slug: 'packing', title: 'Packing Essentials', description: 'What to bring on long trips.', postsCount: 0, lastActivityAt: new Date().toISOString() },
+        { id: 302, slug: 'vehicle-prep', title: 'Vehicle Preparation', description: 'Maintenance and checks before you go.', postsCount: 0, lastActivityAt: new Date().toISOString() }
+      ]
+    }
+  ],
   reviews: [],
   userPreferences: {},
   users: [],
@@ -89,4 +123,4 @@ const nextId = (collection) =>
     ? Math.max(...collection.map((item) => item.id)) + 1
     : 1;
 
-module.exports = { getStore, setStore, resetStore, nextId };
+module.exports = { getStore, setStore, resetStore, nextId, addMockData };

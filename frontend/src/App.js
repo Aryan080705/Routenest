@@ -871,15 +871,84 @@ function CommunityPage() {
 }
 
 // ─── Forums ───
+function ForumTopicView({ forumSlug, topicSlug, onBack }) {
+  const { t } = useI18n();
+  const { user } = useAuth();
+  const toast = useToast();
+  const [topicData, setTopicData] = useState(null);
+  const [np, setNp] = useState({ title: "", body: "" });
+
+  const load = useCallback(() => {
+    api.get(`/api/forums/${forumSlug}/topics/${topicSlug}`).then(r => setTopicData(r.data)).catch(() => {});
+  }, [forumSlug, topicSlug]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const createPost = async () => {
+    if (!user) { toast(t("community.verifiedOnly"), "error"); return; }
+    if (!np.title || !np.body) { toast(t("errors.required"), "error"); return; }
+    try {
+      await api.post(`/api/forums/${forumSlug}/topics/${topicSlug}/discuss`, { ...np, author: user.name, authorId: user.id, verified: user.verified });
+      toast(t("success.posted") || "Posted successfully");
+      setNp({ title: "", body: "" });
+      load();
+    } catch (err) {
+      toast(err.response?.data?.error || t("errors.network"), "error");
+    }
+  };
+
+  if (!topicData) return <div className="empty"><span className="spinner" /></div>;
+
+  return (
+    <div data-testid="forum-topic-view">
+      <button className="btn btn-ghost" onClick={onBack} style={{ marginBottom: 14 }}>← {t("forums.backToCategories") || "Back"}</button>
+      <div className="card">
+        <h2 style={{ margin: 0, fontFamily: "Fraunces, serif" }}>{t(`forumsList.${forumSlug}.topics.${topicSlug}.title`, topicData.title)}</h2>
+        <div className="muted" style={{ marginTop: 8 }}>{t(`forumsList.${forumSlug}.topics.${topicSlug}.description`, topicData.description)}</div>
+      </div>
+      
+      {user && user.verified && (
+        <div className="card" style={{ marginTop: 20 }}>
+          <h3 style={{ marginTop: 0 }}>{t("community.new") || "New Post"}</h3>
+          <div className="field"><label>{t("community.postTitle")}</label><input className="input" value={np.title} onChange={e => setNp({ ...np, title: e.target.value })} /></div>
+          <div className="field"><label>{t("community.postBody")}</label><textarea className="input" rows={3} value={np.body} onChange={e => setNp({ ...np, body: e.target.value })} /></div>
+          <button className="btn btn-primary" onClick={createPost}>{t("community.post")}</button>
+        </div>
+      )}
+
+      <div style={{ marginTop: 20 }}>
+        {topicData.posts && topicData.posts.length > 0 ? topicData.posts.map(p => (
+          <div key={p.id} className="card post" style={{ marginTop: 12 }}>
+            <div className="post-head">
+              <div className="avatar-fallback">{(p.author || "?").trim().split(" ").map(s => s[0]).join("").slice(0, 2).toUpperCase()}</div>
+              <div>
+                <strong>{p.author}</strong> {p.verified && <span className="verified-badge" title="Verified User">⭐</span>}
+                <div className="post-meta">{new Date(p.createdAt).toLocaleString()}</div>
+              </div>
+            </div>
+            <h4 style={{ margin: "12px 0 8px 0" }}>{p.title}</h4>
+            <p style={{ margin: 0, color: "var(--ink-soft)" }}>{p.body}</p>
+          </div>
+        )) : <div className="empty">{t("community.noPosts") || "No posts yet."}</div>}
+      </div>
+    </div>
+  );
+}
+
 function ForumsPanel() {
   const { t } = useI18n();
   const [forums, setForums] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [selectedTopic, setSelectedTopic] = useState(null);
   const FALLBACK_EMOJI = { routes: "🛣️", "travel-tips": "✈️", destinations: "🗺️" };
 
   useEffect(() => { api.get("/api/forums").then(r => setForums(r.data)).catch(() => {}); }, []);
 
   const activeForum = selected ? forums.find(f => f.slug === selected) : null;
+
+  if (activeForum && selectedTopic) {
+    return <ForumTopicView forumSlug={selected} topicSlug={selectedTopic} onBack={() => setSelectedTopic(null)} />;
+  }
 
   if (activeForum) {
     return (
@@ -897,7 +966,7 @@ function ForumsPanel() {
             {(activeForum.topics || []).length === 0 ? (
               <div className="empty">{t("forums.noTopics")}</div>
             ) : activeForum.topics.map((tp) => (
-              <div key={tp.id} data-testid={`forum-topic-${tp.slug}`} style={{ padding: "14px 0", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", gap: 16, alignItems: "center" }}>
+              <div key={tp.id} data-testid={`forum-topic-${tp.slug}`} onClick={() => setSelectedTopic(tp.slug)} style={{ padding: "14px 0", borderTop: "1px solid var(--border)", display: "flex", justifyContent: "space-between", gap: 16, alignItems: "center", cursor: "pointer" }}>
                 <div><strong>{t(`forumsList.${activeForum.slug}.topics.${tp.slug}.title`, tp.title)}</strong><div className="muted" style={{ fontSize: 13 }}>{t(`forumsList.${activeForum.slug}.topics.${tp.slug}.description`, tp.description)}</div></div>
                 <span className="post-topic">{tp.postsCount || 0} {t("forums.posts")}</span>
               </div>

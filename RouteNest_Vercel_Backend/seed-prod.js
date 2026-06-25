@@ -1,0 +1,47 @@
+const dummyData = [
+    { name: 'Karan Malhotra', title: 'Road condition on NH48?', body: 'Does anyone know if the construction near Surat on NH48 is complete? Planning a trip to Mumbai next week.', topic: 'questions', photo: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=600&q=80' },
+    { name: 'Riya Sen', title: 'Amazing trip to Spiti Valley', body: 'Just came back from a 10 day road trip to Spiti. The roads are tough but the views are totally worth it! Make sure you carry enough fuel.', topic: 'travelogues', photo: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=600&q=80' },
+    { name: 'Tarun Bajaj', title: 'Best dhabas on Delhi-Chandigarh highway', body: 'I always stop at Amrik Sukhdev, but are there any hidden gems for parathas on this route?', topic: 'food', photo: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=600&q=80' },
+    { name: 'Simran Kaur', title: 'Fog alert: Yamuna Expressway', body: 'Heavy fog on the Yamuna Expressway this morning. Visibility is less than 50 meters. Drive slow!', topic: 'alerts', photo: 'https://images.unsplash.com/photo-1473220464584-6fb0d2e8e0d9?auto=format&fit=crop&w=600&q=80' },
+    { name: 'Arjun Nair', title: 'Is it safe to drive to Goa at night?', body: 'Planning to leave Pune around 8 PM. Is the Amboli ghat section safe for night driving?', topic: 'questions', photo: 'https://images.unsplash.com/photo-1483363065839-a9a202bc9219?auto=format&fit=crop&w=600&q=80' },
+    { name: 'Divya Sharma', title: 'Hidden waterfall near Lonavala', body: 'Found a pristine waterfall just 10km off the main highway. The trail is completely empty. Highly recommended.', topic: 'travelogues', photo: 'https://images.unsplash.com/photo-1432405972618-fc4087e502dd?auto=format&fit=crop&w=600&q=80' },
+    { name: 'Mohit Agarwal', title: 'Traffic jam at Peenya, Bangalore', body: 'Huge pileup at Peenya junction right now. Avoid the highway if you are heading towards Tumkur.', topic: 'alerts', photo: 'https://images.unsplash.com/photo-1502877338535-349e67226417?auto=format&fit=crop&w=600&q=80' },
+    { name: 'Neha Singh', title: 'Car breakdown assistance needed', body: 'My car broke down near Jaipur highway. Does anyone have the number for a reliable towing service here?', topic: 'questions', photo: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=600&q=80' },
+    { name: 'Kunal Kapoor', title: 'Best route for Bangalore to Ooty', body: 'Should I take the Mysore road or the Kanakapura road? Heard Mysore road is full of diversions.', topic: 'questions', photo: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=600&q=80' },
+    { name: 'Aarti Desai', title: 'Monsoon driving tips', body: 'Always check your wiper blades and tires before a monsoon trip. The western ghats can get very slippery.', topic: 'travelogues', photo: 'https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?auto=format&fit=crop&w=600&q=80' },
+    { name: 'Varun Dhawan', title: 'Heavy rain on Mumbai-Pune Expressway', body: 'It is pouring heavily on the expressway. Traffic is moving very slowly near Lonavala.', topic: 'alerts', photo: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=600&q=80' },
+    { name: 'Megha Reddy', title: 'Must-visit cafe in Pondicherry', body: 'If you are driving to Pondi, do not miss the Coromandel Cafe. Their desserts are out of this world!', topic: 'food', photo: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=600&q=80' }
+];
+
+const PROD_URL = 'https://routenest-production.up.railway.app';
+
+async function seed() {
+  for (let d of dummyData) {
+    try {
+      const num = Math.floor(Math.random() * 1000000);
+      const email = `user${num}@example.com`;
+      const regRes = await fetch(PROD_URL + '/api/auth/register', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ name: d.name, email, password: 'password123' })
+      });
+      const regData = await regRes.json();
+      const token = regData.token;
+      
+      await fetch(PROD_URL + `/api/profiles/${regData.user.id}/verify`, {
+        method: 'POST', headers: {'Authorization': 'Bearer ' + token}
+      });
+      
+      const postRes = await fetch(PROD_URL + '/api/community', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token},
+        body: JSON.stringify({ title: d.title, body: d.body, topic: d.topic, photo: d.photo })
+      });
+      
+      console.log('Posted for', d.name, await postRes.status);
+    } catch(err) {
+      console.error('Failed for', d.name, err.message);
+    }
+  }
+  console.log('Finished seeding prod!');
+}
+seed();

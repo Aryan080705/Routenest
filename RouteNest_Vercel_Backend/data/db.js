@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { getStore, setStore } = require('./store');
+const { getStore, setStore, addMockData } = require('./store');
 
 const StoreSchema = new mongoose.Schema({
   key: { type: String, required: true, unique: true },
@@ -25,6 +25,13 @@ async function connectDB() {
         fs.writeFileSync(DATA_FILE, JSON.stringify(getStore()));
         console.log("🌱 Created new initial store in local data.json.");
       }
+      
+      // Inject mock data if DB is empty (i.e. no posts)
+      if (getStore().posts.length === 0) {
+        console.log("Empty DB detected, injecting mock data...");
+        addMockData();
+        fs.writeFileSync(DATA_FILE, JSON.stringify(getStore()));
+      }
     } catch (err) {
       console.error("❌ Local file DB error:", err);
     }
@@ -48,6 +55,12 @@ async function connectDB() {
       const initial = getStore();
       await StoreModel.create({ key: 'main', data: initial });
       console.log("🌱 Created new initial store in MongoDB.");
+    }
+
+    if (getStore().posts.length === 0) {
+      console.log("Empty DB detected, injecting mock data...");
+      addMockData();
+      await StoreModel.updateOne({ key: 'main' }, { data: getStore() });
     }
   } catch (err) {
     console.error("❌ MongoDB connection error:", err);
