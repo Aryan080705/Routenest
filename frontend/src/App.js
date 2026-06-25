@@ -881,6 +881,7 @@ function CommunityPage() {
               <button className="action-btn" onClick={() => share(p, "native")} data-testid={`share-native-${p.id}`}>↗ Share</button>
               <button className="action-btn" onClick={() => share(p, "whatsapp")} data-testid={`share-wa-${p.id}`}>↗ WhatsApp</button>
               <button className="action-btn" onClick={() => share(p, "facebook")} data-testid={`share-fb-${p.id}`}>↗ Facebook</button>
+              <button className="action-btn" onClick={() => share(p, "twitter")} data-testid={`share-tw-${p.id}`}>↗ Twitter</button>
               <button className="action-btn" onClick={() => { navigator.clipboard.writeText(window.location.origin + `/community#post-${p.id}`); toast("Link copied!"); }} data-testid={`share-copy-${p.id}`}>📋 Copy Link</button>
               {user && <button className="action-btn" onClick={() => report(p)} data-testid={`report-${p.id}`}>⚑ {t("community.report")}</button>}
               {user && p.authorId === user.id && editingId !== p.id && !isPast24h(p) && <button className="action-btn" onClick={() => startEdit(p)} data-testid={`edit-${p.id}`}>✎ {t("reviews.edit")}</button>}
