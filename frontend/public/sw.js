@@ -1,4 +1,3 @@
-JS
 /* public/sw.js — Service Worker for Web Push notifications */
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
