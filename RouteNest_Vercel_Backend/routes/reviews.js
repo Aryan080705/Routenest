@@ -137,7 +137,7 @@ router.post("/", (req, res) => {
   if (fieldErr) return res.status(400).json({ error: fieldErr });
   const ratingErr = validateRating(body.rating);
   if (ratingErr) return res.status(400).json({ error: ratingErr });
-  const lenErr = validateMinLength(body.text, 30, "Review");
+  const lenErr = validateMinLength(body.text, 20, "Review");
   if (lenErr) return res.status(400).json({ error: lenErr });
 
   const dup = reviews.find((r) =>
@@ -193,8 +193,8 @@ router.patch("/:id", (req, res) => {
 
   const { text, rating } = req.body;
 
-  if (!text || text.trim().length < 30) {
-    return res.status(400).json({ error: "Review text must be at least 30 characters." });
+  if (!text || text.trim().length < 20) {
+    return res.status(400).json({ error: "Review text must be at least 20 characters." });
   }
   if (rating !== undefined) {
     const ratingErr = validateRating(Number(rating));

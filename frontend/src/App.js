@@ -1070,7 +1070,7 @@ function ReviewsPage() {
     if (!user) { toast(t("community.verifiedOnly"), "error"); return; }
     if (!user?.verified) { toast("Please verify your account to access this feature.", "error"); return; }
     if (!form.journeyId) { toast("Please select a completed journey to review.", "error"); return; }
-    if (form.text.length < 30) { toast(t("errors.minChars") || "Review must be at least 30 characters.", "error"); return; }
+    if (form.text.length < 20) { toast(t("errors.minChars") || "Your review is too short! Please write at least 20 characters.", "error"); return; }
     try { await api.post("/api/reviews", form); toast(t("success.reviewed")); setForm({ route: "", journeyId: "", rating: 5, text: "" }); load(); }
     catch (err) { toast(err.response?.data?.detail || err.response?.data?.error || t("errors.network"), "error"); }
   };
