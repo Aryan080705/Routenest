@@ -61,6 +61,40 @@ router.get("/", (req, res) => {
   res.json(items.map(enrich));
 });
 
+/* GET /api/reviews/completed-journeys */
+router.get("/completed-journeys", (req, res) => {
+  const auth = req.headers.authorization || "";
+  const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  const { users, sessions, completedJourneys } = getStore();
+  const userId = sessions[token];
+  if (!userId) return res.status(401).json({ error: "Unauthorized." });
+  
+  const journeys = (completedJourneys || []).filter(j => j.userId === userId);
+  res.json(journeys);
+});
+
+/* POST /api/reviews/simulate-journey */
+router.post("/simulate-journey", (req, res) => {
+  const auth = req.headers.authorization || "";
+  const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  const { users, sessions, completedJourneys } = getStore();
+  const userId = sessions[token];
+  if (!userId) return res.status(401).json({ error: "Unauthorized." });
+
+  const journey = {
+    id: `JRN-${Math.floor(Math.random() * 90000) + 10000}`,
+    journeyId: `JRN-${Math.floor(Math.random() * 90000) + 10000}`,
+    userId,
+    route: ["Delhi to Jaipur", "Mumbai to Pune", "Bangalore to Ooty"][Math.floor(Math.random() * 3)],
+    completedAt: new Date().toISOString()
+  };
+  
+  if (!getStore().completedJourneys) getStore().completedJourneys = [];
+  getStore().completedJourneys.unshift(journey);
+  
+  res.status(201).json(journey);
+});
+
 /* GET /api/reviews/stats — unchanged */
 router.get("/stats", (_req, res) => {
   const { reviews } = getStore();
@@ -90,7 +124,15 @@ router.post("/", (req, res) => {
   if (!user.verified) return res.status(403).json({ error: "Only verified users can submit reviews." });
 
   const body = req.body;
-  if (!body.completedJourney) return res.status(403).json({ error: "Reviews are allowed only after a completed journey." });
+  if (!body.journeyId) return res.status(400).json({ error: "Journey ID is required." });
+  
+  const { completedJourneys } = getStore();
+  const journey = (completedJourneys || []).find(j => j.journeyId === body.journeyId && j.userId === user.id);
+  
+  if (!journey) {
+    return res.status(403).json({ error: "You can only review journeys you have completed." });
+  }
+
   const fieldErr = requireFields(body, ["route", "rating", "text", "journeyId"]);
   if (fieldErr) return res.status(400).json({ error: fieldErr });
   const ratingErr = validateRating(body.rating);

@@ -51,7 +51,8 @@ const initialData = () => ({
   notificationQueue: [],
   deliveryLogs: [],
   notifications: [],
-  moderationQueue: []
+  moderationQueue: [],
+  completedJourneys: []
 });
 
 /* ── live store ─────────────────────────────────────────────── */
@@ -121,6 +122,13 @@ const addMockData = () => {
   
   mockReviews.forEach((r, i) => {
     store.reviews.push({ id: 5000 + i, ...r });
+    store.completedJourneys.push({
+      id: `JRN-${Math.floor(Math.random() * 90000) + 10000}`,
+      journeyId: r.journeyId,
+      userId: r.userId,
+      route: r.route,
+      completedAt: new Date(Date.now() - (i + 1) * 86400000).toISOString()
+    });
   });
 
   // Dummy reports

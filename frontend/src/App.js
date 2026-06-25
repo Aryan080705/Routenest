@@ -1041,16 +1041,37 @@ function ForumsPage() {
 function ReviewsPage() {
   const { t } = useI18n(); const { user } = useAuth(); const toast = useToast();
   const [items, setItems] = useState([]); const [stats, setStats] = useState({ averageRating: 0, total: 0 });
-  const [form, setForm] = useState({ route: "", journeyId: "", rating: 5, text: "", completedJourney: true });
+  const [completedJourneys, setCompletedJourneys] = useState([]);
+  const [form, setForm] = useState({ route: "", journeyId: "", rating: 5, text: "" });
   const [editing, setEditing] = useState(null); const [editText, setEditText] = useState(""); const [editRating, setEditRating] = useState(5);
-  const load = useCallback(() => { api.get("/api/reviews").then(r => setItems(r.data)); api.get("/api/reviews/stats").then(r => setStats(r.data)); }, []);
+  
+  const load = useCallback(() => { 
+    api.get("/api/reviews").then(r => setItems(r.data)); 
+    api.get("/api/reviews/stats").then(r => setStats(r.data)); 
+    if (user) {
+      api.get("/api/reviews/completed-journeys").then(r => setCompletedJourneys(r.data || [])).catch(() => {});
+    }
+  }, [user]);
+  
   useEffect(() => { load(); }, [load]);
+  
+  const simulateJourney = async () => {
+    try {
+      await api.post("/api/reviews/simulate-journey");
+      toast("🚗 Simulated a completed journey!", "info");
+      load();
+    } catch (err) {
+      toast(t("errors.network"), "error");
+    }
+  };
+  
   const submit = async (e) => {
     e.preventDefault();
     if (!user) { toast(t("community.verifiedOnly"), "error"); return; }
     if (!user?.verified) { toast("Please verify your account to access this feature.", "error"); return; }
+    if (!form.journeyId) { toast("Please select a completed journey to review.", "error"); return; }
     if (form.text.length < 30) { toast(t("errors.minChars") || "Review must be at least 30 characters.", "error"); return; }
-    try { await api.post("/api/reviews", form); toast(t("success.reviewed")); setForm({ route: "", journeyId: "", rating: 5, text: "", completedJourney: true }); load(); }
+    try { await api.post("/api/reviews", form); toast(t("success.reviewed")); setForm({ route: "", journeyId: "", rating: 5, text: "" }); load(); }
     catch (err) { toast(err.response?.data?.detail || err.response?.data?.error || t("errors.network"), "error"); }
   };
   const helpful = async (r) => { 
@@ -1090,17 +1111,48 @@ function ReviewsPage() {
           <div className="muted">{t("reviews.basedOn", { n: stats.total })}</div>
         </div>
         {user && (
-          <form className="card" onSubmit={submit}>
-            <h3 style={{ marginTop: 0 }}>{t("reviews.write")}</h3>
-            <div className="field"><label>{t("reviews.route")}</label><input className="input" required value={form.route} onChange={e => setForm({ ...form, route: e.target.value })} data-testid="rev-route" /></div>
-            <div className="field"><label>{t("reviews.journeyId")}</label><input className="input" required value={form.journeyId} onChange={e => setForm({ ...form, journeyId: e.target.value })} data-testid="rev-journey" /></div>
-            <div className="field"><label>{t("reviews.rating")}</label>
-              <div className="rating-input">{[1, 2, 3, 4, 5].map(n => <button key={n} type="button" className={n <= form.rating ? "on" : ""} onClick={() => setForm({ ...form, rating: n })} data-testid={`rev-star-${n}`}>★</button>)}</div>
+          <div className="card">
+            <div className="row between" style={{ alignItems: "center", marginBottom: 12 }}>
+              <h3 style={{ margin: 0 }}>{t("reviews.write")}</h3>
+              <button className="btn btn-ghost" onClick={simulateJourney} data-testid="sim-journey-btn" style={{ fontSize: 12 }}>🧪 Simulate Journey</button>
             </div>
-            <div className="field"><label>{t("reviews.text")}</label><textarea className="input" rows={4} value={form.text} onChange={e => setForm({ ...form, text: e.target.value })} data-testid="rev-text" /></div>
-            <label className="checkbox"><input type="checkbox" checked={form.completedJourney} onChange={e => setForm({ ...form, completedJourney: e.target.checked })} data-testid="rev-completed" />{t("reviews.completed")}</label>
-            <button className="btn btn-primary" type="submit" data-testid="rev-submit" style={{ width: "100%", marginTop: 8 }}>{t("reviews.submit")}</button>
-          </form>
+            
+            {completedJourneys.length === 0 ? (
+              <div className="empty" style={{ padding: "20px" }}>
+                You have not completed any journeys yet. Reviews can only be submitted for completed journeys.
+              </div>
+            ) : (
+              <form onSubmit={submit}>
+                <div className="field">
+                  <label>Select Completed Journey</label>
+                  <select 
+                    className="input" 
+                    required 
+                    value={form.journeyId} 
+                    onChange={e => {
+                      const j = completedJourneys.find(x => x.journeyId === e.target.value);
+                      if (j) setForm({ ...form, journeyId: j.journeyId, route: j.route });
+                    }} 
+                    data-testid="rev-journey-select"
+                  >
+                    <option value="">-- Choose a Journey --</option>
+                    {completedJourneys.map(j => (
+                      <option key={j.id} value={j.journeyId}>{j.route} (ID: {j.journeyId})</option>
+                    ))}
+                  </select>
+                </div>
+                {form.journeyId && (
+                  <>
+                    <div className="field"><label>{t("reviews.rating")}</label>
+                      <div className="rating-input">{[1, 2, 3, 4, 5].map(n => <button key={n} type="button" className={n <= form.rating ? "on" : ""} onClick={() => setForm({ ...form, rating: n })} data-testid={`rev-star-${n}`}>★</button>)}</div>
+                    </div>
+                    <div className="field"><label>{t("reviews.text")}</label><textarea className="input" rows={4} value={form.text} onChange={e => setForm({ ...form, text: e.target.value })} data-testid="rev-text" /></div>
+                    <button className="btn btn-primary" type="submit" data-testid="rev-submit" style={{ width: "100%", marginTop: 8 }}>{t("reviews.submit")}</button>
+                  </>
+                )}
+              </form>
+            )}
+          </div>
         )}
       </div>
       <div className="card" style={{ marginTop: 20 }}>
