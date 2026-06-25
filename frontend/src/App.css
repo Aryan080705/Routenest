@@ -173,6 +173,20 @@ input, textarea, select { font-family: inherit; font-size: 16px !important; /* p
 .icon-btn { width: 38px; height: 38px; border-radius: 12px; background: var(--bg-soft); border: 1px solid var(--border); display: inline-flex; align-items: center; justify-content: center; color: var(--ink); transition: transform .15s ease; }
 .icon-btn:hover { transform: translateY(-1px); }
 .badge-count { position: absolute; top: -4px; right: -4px; background: var(--accent); color: white; font-size: 10px; padding: 2px 5px; border-radius: 999px; font-weight: 700; }
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #3b82f6; /* Trust blue */
+  color: white;
+  font-size: 9px;
+  font-weight: bold;
+  margin-left: 4px;
+  vertical-align: middle;
+}
 .lang-sel { background: var(--bg-soft); border: 1px solid var(--border); color: var(--ink); padding: 8px 12px; border-radius: 12px; font-size: 14px; }
 
 /* Buttons — touch friendly */

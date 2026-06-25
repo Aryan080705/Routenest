@@ -818,7 +818,7 @@ function CommunityPage() {
             <div className="post-head">
               <div className="avatar-fallback" data-testid={`post-avatar-${p.id}`}>{(p.author || "?").trim().split(" ").map(s => s[0]).join("").slice(0, 2).toUpperCase()}</div>
               <div style={{ flex: 1 }}>
-                <div><strong data-testid={`post-author-${p.id}`}>{p.author}</strong> {p.verified && <span style={{ color: "var(--good)" }}>✓</span>}</div>
+                <div><strong data-testid={`post-author-${p.id}`}>{p.author}</strong> {p.verified && <span className="verified-badge" title="Verified User">✓</span>}</div>
                 <div className="post-meta" data-testid={`post-time-${p.id}`}>{new Date(p.createdAt).toLocaleString()}{p.updatedAt && ` · edited`}</div>
               </div>
               <span className="post-topic" data-testid={`post-topic-${p.id}`}>{topicLabel(p.topic)}</span>
@@ -997,7 +997,7 @@ function ReviewsPage() {
               <div className="avatar-fallback">{r.user[0]}</div>
               <div style={{ flex: 1 }}>
                 <strong data-testid={`review-user-${r.id}`}>{r.user}</strong>{" "}
-                {r.verified && <span title="Verified User" style={{ color: "var(--good)", fontSize: 13, fontWeight: 700 }}>⭐</span>}{" "}
+                {r.verified && <span className="verified-badge" title="Verified User">✓</span>}{" "}
                 {r.trustedReviewer && (
                   <span data-testid={`review-trusted-${r.id}`} title="Trusted Reviewer" style={{ display: "inline-flex", alignItems: "center", gap: 4, marginLeft: 6, padding: "2px 8px", borderRadius: 999, background: "color-mix(in srgb, var(--warn) 18%, transparent)", color: "var(--warn)", fontSize: 11, fontWeight: 700 }}>⭐ Trusted</span>
                 )}
@@ -1370,7 +1370,7 @@ function ProfilePage() {
           <div>
             <h1 style={{ margin: 0, fontFamily: "Fraunces, serif" }}>
               {profile.name}{" "}
-              {profile.verified && <span title="Verified User" style={{ color: "var(--good)" }}>⭐</span>}
+              {profile.verified && <span className="verified-badge" title="Verified User" style={{ width: 22, height: 22, fontSize: 14 }}>✓</span>}
               {!profile.verified && user?.id === profile.userId && (
                 <button className="btn btn-primary" onClick={requestVerification} disabled={busy} style={{ fontSize: 12, padding: "4px 10px", marginLeft: 10, verticalAlign: "middle" }}>
                   {busy ? "..." : "Request Verification"}
@@ -1522,6 +1522,24 @@ function AdminModerationPage() {
         <div>
           <h1 className="page-title" style={{ margin: 0 }}>{t("moderation.title")}</h1>
           <p className="page-sub" style={{ margin: '4px 0 0 0', color: 'var(--ink-soft)' }}>{t("moderation.subtitle")}</p>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginTop: '24px' }}>
+        <div className="card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ fontSize: '32px' }}>👥</span>
+          <strong style={{ fontSize: '24px' }}>142</strong>
+          <span className="muted">Total Verified Users</span>
+        </div>
+        <div className="card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ fontSize: '32px' }}>📝</span>
+          <strong style={{ fontSize: '24px' }}>89</strong>
+          <span className="muted">Active Posts</span>
+        </div>
+        <div className="card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ fontSize: '32px' }}>⚠️</span>
+          <strong style={{ fontSize: '24px', color: reports.length > 0 ? 'var(--bad)' : 'var(--good)' }}>{reports.length}</strong>
+          <span className="muted">Pending Reports</span>
         </div>
       </div>
       
