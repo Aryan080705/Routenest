@@ -766,7 +766,7 @@ function CommunityPage() {
       }
       
       const links = { 
-        twitter: `https://x.com/intent/tweet?text=${encodeURIComponent(text + " " + url)}`, 
+        twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent("Check out this journey: " + text + "\n" + url)}`, 
         facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, 
         whatsapp: `https://wa.me/?text=${encodeURIComponent(text + " " + url)}`, 
         instagram: `https://www.instagram.com/?url=${encodeURIComponent(url)}` 
