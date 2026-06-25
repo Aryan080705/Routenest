@@ -696,6 +696,201 @@ function CommunityPage() {
     const url = tab === "trending" ? "/api/community/trending" : "/api/community";
     api.get(url).then(r => {
       const raw = Array.isArray(r.data) ? r.data : [];
+              </div>
+            ))}
+            {waypoints.length < 3 && <button type="button" className="btn btn-ghost" onClick={() => setWaypoints([...waypoints, ""])} data-testid="planner-add-wp">{t("planner.addWaypoint")}</button>}
+            <button className="btn btn-primary" type="submit" disabled={busy} data-testid="planner-generate" style={{ width: "100%", marginTop: 12 }}>{busy ? <span className="spinner" /> : t("planner.generate")}</button>
+            {routes.length > 0 && (
+              <div className="row" style={{ marginTop: 10, gap: 8 }}>
+                <button type="button" className="btn" onClick={generate} data-testid="planner-refresh">{t("planner.refreshTraffic")}</button>
+                <button type="button" className="btn" onClick={saveCurrent} data-testid="planner-save">{t("planner.save")}</button>
+              </div>
+            )}
+          </form>
+          {saved.length > 0 && (
+            <div className="card" style={{ marginTop: 16 }}>
+              <h3 style={{ marginTop: 0 }}>{t("planner.saved")}</h3>
+              <div className="col">
+                {saved.map(s => (
+                  <div key={s.id} className="row between" style={{ padding: 8, background: "var(--bg-soft)", borderRadius: 10 }}>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
+                      <button onClick={() => { setStart(s.start); setDestination(s.destination); setRoutes([s.route]); setActiveId(s.route.id); }} className="btn btn-ghost" style={{ padding: 0, textAlign: "left" }}>{s.name}</button>
+                      {s.waypoints && s.waypoints.length > 0 && (
+                        <div style={{ fontSize: 12, color: "var(--muted)", fontWeight: 500 }}>Via: {s.waypoints.join(", ")}</div>
+                      )}
+                    </div>
+                    <button className="action-btn btn-danger" onClick={() => removeSaved(s.id)} data-testid={`planner-saved-del-${s.id}`}>×</button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        <div>
+          <div className="map-wrap">
+            {leafletReady && RLMapContainer ? (
+              <RLMapContainer
+                center={center}
+                zoom={6}
+                scrollWheelZoom={true}
+                preferCanvas={true}
+                tap={true}
+                dragging={true}
+                touchZoom={true}
+                doubleClickZoom={true}
+                zoomControl={true}
+                attributionControl={false}
+              >
+                <RLTileLayer
+                  url={`https://api.tomtom.com/map/1/tile/basic/main/{z}/{x}/{y}.png?key=tVkhz6q997P6azA5OenN78IvCQMLJdu4`}
+                  attribution="&copy; TomTom"
+                  maxNativeZoom={18}
+                  maxZoom={18}
+                  keepBuffer={2}
+                  updateWhenIdle={true}
+                  updateWhenZooming={false}
+                />
+                {routes.map(r => (
+                  <React.Fragment key={r.id}>
+                    <RLPolyline
+                      positions={r.path}
+                      pathOptions={{
+                        color: r.id === activeId ? "#d44d2a" : "#aaa",
+                        weight: r.id === activeId ? 6 : 3,
+                        opacity: r.id === activeId ? 1 : 0.5,
+                        lineCap: "round",
+                        lineJoin: "round",
+                      }}
+                      eventHandlers={{ click: () => setActiveId(r.id) }}
+                    />
+                    {r.id === activeId && r.path.length > 0 && (<>
+                      <RLMarker position={r.path[0]}><RLPopup>{t("planner.start")}: {start}</RLPopup></RLMarker>
+                      <RLMarker position={r.path[r.path.length - 1]}><RLPopup>{t("planner.destination")}: {destination}</RLPopup></RLMarker>
+                    </>)}
+                  </React.Fragment>
+                ))}
+                {routes.length > 0 && <FitBounds routes={routes} activeId={activeId} />}
+              </RLMapContainer>
+            ) : (
+              <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-soft)", borderRadius: 16 }}>
+                <span className="spinner" style={{ width: 28, height: 28, borderWidth: 3 }} />
+              </div>
+            )}
+          </div>
+          {routes.length === 0 ? <div className="empty">{t("planner.noRoutes")}</div> : (
+            <>
+              <div className="row" style={{ gap: 10, marginTop: 16, flexWrap: "wrap", alignItems: "center" }} data-testid="compare-controls">
+                <span className="muted" style={{ fontSize: 13 }}>{t("planner.compare")}:</span>
+                {[
+                  { k: "recommended", label: t("planner.recommended") },
+                  { k: "distance", label: t("planner.distance") },
+                  { k: "time", label: t("planner.eta") },
+                  { k: "traffic", label: t("planner.congestion") },
+                ].map(opt => (
+                  <button key={opt.k} onClick={() => setSortBy(opt.k)} data-testid={`sort-${opt.k}`} className={`btn ${sortBy === opt.k ? "btn-primary" : "btn-ghost"}`} style={{ padding: "6px 14px", fontSize: 13 }}>
+                    {opt.label}
+                  </button>
+                ))}
+                <div style={{ flex: 1 }} />
+                <label className="checkbox" style={{ padding: 0, fontSize: 13 }}>
+                  <input type="checkbox" checked={autoRefresh} onChange={(e) => setAutoRefresh(e.target.checked)} data-testid="auto-refresh-toggle" />
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: 999, background: autoRefresh ? "var(--good)" : "var(--ink-mute)", boxShadow: autoRefresh ? "0 0 0 4px color-mix(in srgb, var(--good) 25%, transparent)" : "none" }} data-testid="live-indicator" />
+                    {t("planner.liveTraffic")}
+                  </span>
+                </label>
+              </div>
+              <ComparisonTable items={sortedRoutes} activeId={activeId} onPick={setActiveId} />
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Community helpers ───
+function normalizePost(raw) {
+  const p = raw || {};
+  const likes = Array.isArray(p.likes) ? p.likes : [];
+  const comments = Array.isArray(p.comments) ? p.comments : [];
+  return {
+    ...p,
+    id: p.id,
+    title: p.title || "",
+    body: p.body || "",
+    text: p.text || p.body || "",
+    likes,
+    comments,
+    likeCount: typeof p.likeCount === "number" ? p.likeCount : likes.length,
+    commentCount: typeof p.commentCount === "number" ? p.commentCount : comments.length,
+    reports: typeof p.reports === "number" ? p.reports : (Array.isArray(p.reports) ? p.reports.length : 0),
+  };
+}
+
+function CommentBlock({ post, onChange }) {
+  const { t } = useI18n(); const { user } = useAuth(); const toast = useToast();
+  const [text, setText] = useState(""); const [replyTo, setReplyTo] = useState(null); const [replyText, setReplyText] = useState("");
+  const add = async (parentId, val) => {
+    if (!user) return; if (!val.trim()) return;
+    const currentText = val;
+    setText(""); setReplyText(""); setReplyTo(null);
+    try {
+      await api.post(`/api/community/${post.id}/comment`, { text: currentText, parentId });
+      onChange();
+    } catch (err) {
+      if (parentId) setReplyText(currentText); else setText(currentText);
+      toast(t("errors.network"), "error");
+    }
+  };
+  return (
+    <div className="comment-list">
+      {(Array.isArray(post.comments) ? post.comments : []).map(c => (
+        <div key={c.id} className="comment">
+          <div className="comment-author">{c.author} {c.verified && "✓"}</div>
+          <div>{c.text}</div>
+          {user && <button className="action-btn" onClick={() => setReplyTo(replyTo === c.id ? null : c.id)} data-testid={`reply-btn-${c.id}`}>{t("community.reply")}</button>}
+          {replyTo === c.id && (
+            <div className="comment-form">
+              <input className="input" placeholder={t("community.writeComment")} value={replyText} onChange={e => setReplyText(e.target.value)} data-testid={`reply-input-${c.id}`} />
+              <button className="btn btn-primary" onClick={() => add(c.id, replyText)} data-testid={`reply-submit-${c.id}`}>{t("community.post")}</button>
+            </div>
+          )}
+          {Array.isArray(c.replies) && c.replies.length > 0 && (
+            <div className="reply-list">
+              {c.replies.map(r => (<div key={r.id} className="comment"><div className="comment-author">{r.author} {r.verified && "✓"}</div><div>{r.text}</div></div>))}
+            </div>
+          )}
+        </div>
+      ))}
+      {user && (
+        <div className="comment-form">
+          <input className="input" placeholder={t("community.writeComment")} value={text} onChange={e => setText(e.target.value)} data-testid={`comment-input-${post.id}`} />
+          <button className="btn btn-primary" onClick={() => add(null, text)} data-testid={`comment-submit-${post.id}`}>{t("community.post")}</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CommunityPage() {
+  const { t } = useI18n(); const { user } = useAuth(); const toast = useToast();
+  const [posts, setPosts] = useState([]); const [tab, setTab] = useState("latest"); const [showNew, setShowNew] = useState(false);
+  const [np, setNp] = useState({ title: "", body: "", topic: "travel-tips", photo: "" });
+  const [editingId, setEditingId] = useState(null);
+  const [editDraft, setEditDraft] = useState({ title: "", body: "", topic: "travel-tips", photo: "" });
+
+  const TOPIC_OPTIONS = [
+    { value: "routes", labelKey: "topics.routes" },
+    { value: "destinations", labelKey: "topics.destinations" },
+    { value: "travel-tips", labelKey: "topics.tips" },
+  ];
+  const topicLabel = (v) => { const opt = TOPIC_OPTIONS.find(o => o.value === v); return opt ? t(opt.labelKey) : v; };
+
+  const load = useCallback(() => {
+    const url = tab === "trending" ? "/api/community/trending" : "/api/community";
+    api.get(url).then(r => {
+      const raw = Array.isArray(r.data) ? r.data : [];
       setPosts(raw.map(normalizePost));
     }).catch(() => {});
   }, [tab]);
@@ -703,6 +898,7 @@ function CommunityPage() {
 
   const create = async () => {
     if (!user) { toast(t("community.verifiedOnly"), "error"); return; }
+    if (!user?.verified) { toast("Please verify your account to access this feature.", "error"); return; }
     if (!np.title || !np.body) { toast(t("errors.required"), "error"); return; }
     try { await api.post("/api/community", np); toast(t("success.posted")); setShowNew(false); setNp({ title: "", body: "", topic: "travel-tips", photo: "" }); load(); }
     catch (err) { toast(err.response?.data?.detail || err.response?.data?.error || t("errors.network"), "error"); }
@@ -1017,6 +1213,7 @@ function ReviewsPage() {
   const submit = async (e) => {
     e.preventDefault();
     if (!user) { toast(t("community.verifiedOnly"), "error"); return; }
+    if (!user?.verified) { toast("Please verify your account to access this feature.", "error"); return; }
     if (form.text.length < 30) { toast(t("errors.minChars") || "Review must be at least 30 characters.", "error"); return; }
     try { await api.post("/api/reviews", form); toast(t("success.reviewed")); setForm({ route: "", journeyId: "", rating: 5, text: "", completedJourney: true }); load(); }
     catch (err) { toast(err.response?.data?.detail || err.response?.data?.error || t("errors.network"), "error"); }
@@ -1386,75 +1583,11 @@ function ProfilePage() {
   const [profile, setProfile] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [saved, setSaved] = useState([]);
-  const [tab, setTab] = useState("posts");
   const [busy, setBusy] = useState(false);
+  const [tab, setTab] = useState("posts");
   const [prefs, setPrefs] = useState({ email: true, push: true, promos: false });
   const [verifyModalOpen, setVerifyModalOpen] = useState(false);
   const [trustModalOpen, setTrustModalOpen] = useState(false);
-  const [verifyForm, setVerifyForm] = useState({ name: "", phone: "", otp: "" });
-  const toast = useToast();
-  
-  const loadProfile = useCallback(() => {
-    if (!user) return;
-    api.get(`/api/profiles/${user.id}`).then(r => setProfile(r.data)).catch(() => {});
-    api.get(`/api/reviews?userId=${user.id}`).then(r => setReviews(r.data)).catch(() => {});
-    api.get(`/api/planner/saved/${user.id}`).then(r => setSaved(r.data)).catch(() => {});
-    if (user.notifications) setPrefs({ email: user.notifications.email ?? true, push: user.notifications.push ?? true, promos: user.notifications.promos ?? false });
-  }, [user]);
-
-  useEffect(() => { loadProfile(); }, [loadProfile]);
-
-  const requestVerification = async () => {
-    setBusy(true);
-    try {
-      await api.post(`/api/profiles/${user.id}/verify`);
-      toast(t("success.verified"));
-      loadProfile();
-      if (reloadUser) reloadUser();
-    } catch {
-      toast(t("errors.verificationFailed"), "error");
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const savePrefs = async (newPrefs) => {
-    setPrefs(newPrefs);
-    try { await api.patch("/api/auth/me/preferences", { notifications: newPrefs }); toast(t("success.prefsSaved")); }
-    catch { toast(t("errors.prefsFailed"), "error"); }
-  };
-
-  if (!user) return <Navigate to="/login" />;
-  if (!profile) return <div className="container"><div className="empty"><span className="spinner" /></div></div>;
-
-  const Stars = ({ n }) => <span className="stars">{"★".repeat(n)}{"☆".repeat(5 - n)}</span>;
-
-  const activity = [
-    ...(profile.recentPosts || []).map((p) => ({ kind: "post", id: `post-${p.id}`, date: p.createdAt, title: p.title, body: p.body, topic: p.topic })),
-    ...reviews.map((r) => ({ kind: "review", id: `review-${r.id}`, date: r.createdAt, title: r.route, body: r.text, rating: r.rating })),
-    ...saved.map((s) => ({ kind: "route", id: `route-${s.id}`, date: s.savedAt, title: "🗺️ Saved Route: " + s.name, body: `${s.start} → ${s.destination}` }))
-  ].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 30);
-
-  return (
-    <div className="container">
-      <div className="card">
-        <div className="row" style={{ gap: 20 }}>
-          <img src={profile.avatar} alt="" className="avatar" style={{ width: 88, height: 88 }} loading="lazy" decoding="async" />
-          <div>
-            <h1 style={{ margin: 0, fontFamily: "Fraunces, serif" }}>
-              {profile.name}{" "}
-              {profile.verified && <span className="verified-badge" title="Verified User" style={{ width: 22, height: 22, fontSize: 14 }}>⭐</span>}
-              {!profile.verified && user?.id === profile.userId && (
-                <button className="btn btn-primary" onClick={requestVerification} disabled={busy} style={{ fontSize: 12, padding: "4px 10px", marginLeft: 10, verticalAlign: "middle" }}>
-                  {busy ? "..." : "Request Verification"}
-                </button>
-              )}
-              {profile.trustedReviewer && (
-                <span data-testid="profile-trusted-badge" title="Trusted Reviewer" style={{ display: "inline-flex", alignItems: "center", gap: 4, marginLeft: 10, padding: "3px 10px", borderRadius: 999, background: "color-mix(in srgb, var(--warn) 18%, transparent)", color: "var(--warn)", fontSize: 12, fontWeight: 700, verticalAlign: "middle" }}>⭐ Trusted</span>
-              )}
-            </h1>
-            <div className="muted">{profile.email}</div>
-            <div className="row" style={{ gap: 20, marginTop: 10, flexWrap: "wrap" }}>
               <div><strong>{profile.postCount || 0}</strong> <span className="muted">{t("profile.posts")}</span></div>
               <div><strong>{reviews.length || 0}</strong> <span className="muted">{t("reviews.title")}</span></div>
               <div><strong>{profile.engagementStats?.totalPostLikes || 0}</strong> <span className="muted">Likes</span></div>
