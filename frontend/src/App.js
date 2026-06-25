@@ -1389,6 +1389,9 @@ function ProfilePage() {
   const [tab, setTab] = useState("posts");
   const [busy, setBusy] = useState(false);
   const [prefs, setPrefs] = useState({ email: true, push: true, promos: false });
+  const [verifyModalOpen, setVerifyModalOpen] = useState(false);
+  const [trustModalOpen, setTrustModalOpen] = useState(false);
+  const [verifyForm, setVerifyForm] = useState({ name: "", phone: "", otp: "" });
   const toast = useToast();
   
   const loadProfile = useCallback(() => {

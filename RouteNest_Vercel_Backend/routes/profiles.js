@@ -175,4 +175,27 @@ router.post("/:userId/verify", (req, res) => {
   res.json({ message: "Verification successful.", verified: true });
 });
 
+/* ── POST /api/profiles/:userId/trust ──────────────────────── */
+router.post("/:userId/trust", (req, res) => {
+  const { userProfiles, users } = getStore();
+  const userId = Number(req.params.userId);
+  
+  const profile = userProfiles.find((p) => p.userId === userId);
+  const user = users.find((u) => u.id === userId);
+
+  if (!profile || !user) {
+    return res.status(404).json({ error: "User not found." });
+  }
+
+  if (!profile.verified) {
+    return res.status(403).json({ error: "Only verified users can become Trusted Reviewers." });
+  }
+
+  // Auto-approve for demo purposes
+  profile.trustedReviewer = true;
+  user.trustedReviewer = true;
+
+  res.json({ message: "Trusted Reviewer approval successful.", trustedReviewer: true });
+});
+
 module.exports = router;

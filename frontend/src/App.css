@@ -475,3 +475,31 @@ textarea.input { resize: vertical; min-height: 90px; white-space: pre-wrap; }
   .avatar-fallback { width: 64px; height: 64px; font-size: 24px; }
   .avatar { width: 64px; height: 64px; }
 }
+
+
+/* --- Verified & Trusted Badges --- */
+.new-badge {
+  animation: badgePopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.verified-badge.new-badge {
+  border-color: color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.trusted-badge.new-badge {
+  border-color: color-mix(in srgb, var(--warn) 30%, transparent);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--warn) 15%, transparent);
+}
+
+.new-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+@keyframes badgePopIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}

@@ -37,7 +37,7 @@ router.post("/register", (req, res) => {
     name: String(name).trim(),
     email: normalized,
     password: String(password),
-    verified: true, // Auto-verify so users can post and review
+    verified: false, // Default unverified so they must verify
     theme: null,
     language: null,
     createdAt: new Date().toISOString()
@@ -50,7 +50,7 @@ router.post("/register", (req, res) => {
     userId: newId,
     name: user.name,
     email: user.email,
-    verified: true,
+    verified: false,
     bio: "",
     // Fallback to initials avatar to avoid incorrect boy/girl photos
     avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random&color=fff`,
