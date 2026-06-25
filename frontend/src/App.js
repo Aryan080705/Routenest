@@ -76,7 +76,7 @@ function AuthModal({ trigger, defaultMode = "login" }) {
       <DialogTrigger asChild>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]" style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "16px", padding: "24px" }}>
+      <DialogContent>
         <DialogTitle style={{ display: "none" }}>{mode === "login" ? "Login" : "Sign up"}</DialogTitle>
         <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
           <button type="button" className={`btn ${mode === "login" ? "btn-primary" : "btn-ghost"}`} style={{ flex: 1 }} onClick={() => setMode("login")}>{t("auth.login")}</button>
