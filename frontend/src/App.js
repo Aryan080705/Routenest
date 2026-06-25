@@ -765,11 +765,12 @@ function CommunityPage() {
         return;
       }
       
+      const shareUrl = url.includes("localhost") ? "https://routenest.vercel.app" : url;
       const links = { 
-        twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent("Check out this journey: " + text + "\n" + url)}`, 
-        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, 
-        whatsapp: `https://wa.me/?text=${encodeURIComponent(text + " " + url)}`, 
-        instagram: `https://www.instagram.com/?url=${encodeURIComponent(url)}` 
+        twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent("Check out this journey: " + text)}`, 
+        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, 
+        whatsapp: `https://wa.me/?text=${encodeURIComponent("Check out this journey: " + text + " " + shareUrl)}`, 
+        instagram: `https://www.instagram.com/?url=${encodeURIComponent(shareUrl)}` 
       };
       if (links[platform]) window.open(links[platform], "_blank");
     } catch { toast(t("errors.network"), "error"); }
