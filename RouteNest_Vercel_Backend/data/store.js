@@ -107,6 +107,17 @@ const addMockData = () => {
     });
   });
 
+  // Dummy reviews
+  const mockReviews = [
+    { route: 'Mumbai to Pune', journeyId: 'JRN-74892', rating: 5, text: 'This route is amazing during the monsoons. The view of the ghats is breathtaking, just make sure to drive carefully because it gets slippery.', userId: 1000, user: 'Karan Malhotra', verified: true, trustedReviewer: true, helpful: 8, createdAt: new Date(Date.now() - 86400000).toISOString() },
+    { route: 'Delhi to Jaipur', journeyId: 'JRN-11234', rating: 4, text: 'The highway is mostly smooth, but there are some construction diversions near Gurugram that can slow you down heavily during peak hours.', userId: 1001, user: 'Riya Sen', verified: true, trustedReviewer: false, helpful: 2, createdAt: new Date(Date.now() - 172800000).toISOString() },
+    { route: 'Bangalore to Mysore', journeyId: 'JRN-99821', rating: 3, text: 'The new expressway is fast, but they need to open more food courts and rest stops. Currently very few options if you need a break.', userId: 1002, user: 'Tarun Bajaj', verified: true, trustedReviewer: false, helpful: 0, createdAt: new Date(Date.now() - 259200000).toISOString() }
+  ];
+  
+  mockReviews.forEach((r, i) => {
+    store.reviews.push({ id: 5000 + i, ...r });
+  });
+
   // Dummy reports
   ['spam', 'harassment', 'inappropriate'].forEach((reason, i) => {
     store.moderationQueue.push({

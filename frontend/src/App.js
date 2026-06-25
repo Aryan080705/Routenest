@@ -1017,7 +1017,7 @@ function ReviewsPage() {
   const submit = async (e) => {
     e.preventDefault();
     if (!user) { toast(t("community.verifiedOnly"), "error"); return; }
-    if (form.text.length < 30) { toast(t("errors.required"), "error"); return; }
+    if (form.text.length < 30) { toast(t("errors.minChars") || "Review must be at least 30 characters.", "error"); return; }
     try { await api.post("/api/reviews", form); toast(t("success.reviewed")); setForm({ route: "", journeyId: "", rating: 5, text: "", completedJourney: true }); load(); }
     catch (err) { toast(err.response?.data?.detail || err.response?.data?.error || t("errors.network"), "error"); }
   };
