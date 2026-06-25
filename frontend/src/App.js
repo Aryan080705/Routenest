@@ -1026,7 +1026,12 @@ function ReviewsPage() {
   const helpful = async (r) => { 
     if (!user) return; 
     setItems(prev => prev.map(item => item.id === r.id ? { ...item, helpful: (item.helpful || 0) + 1 } : item));
-    try { await api.post(`/api/reviews/${r.id}/helpful`, {}); } catch { load(); }
+    try { 
+      await api.post(`/api/reviews/${r.id}/helpful`, {}); 
+      load(); 
+    } catch { 
+      load(); 
+    }
   };
   const report = async (r) => { await api.post(`/api/reviews/${r.id}/report`, {}); toast(t("success.saved")); load(); };
   const saveEdit = async (r) => {
@@ -1420,6 +1425,20 @@ function ProfilePage() {
     }
   };
 
+  const requestTrustedReviewer = async () => {
+    setBusy(true);
+    try {
+      await api.post(`/api/profiles/${user.id}/trust`);
+      toast("Trusted Reviewer approved!");
+      loadProfile();
+      if (reloadUser) reloadUser();
+    } catch (err) {
+      toast(err.response?.data?.error || "Request failed", "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const savePrefs = async (newPrefs) => {
     setPrefs(newPrefs);
     try { await api.patch("/api/auth/me/preferences", { notifications: newPrefs }); toast(t("success.prefsSaved")); }
@@ -1453,6 +1472,11 @@ function ProfilePage() {
               )}
               {profile.trustedReviewer && (
                 <span data-testid="profile-trusted-badge" title="Trusted Reviewer" style={{ display: "inline-flex", alignItems: "center", gap: 4, marginLeft: 10, padding: "3px 10px", borderRadius: 999, background: "color-mix(in srgb, var(--warn) 18%, transparent)", color: "var(--warn)", fontSize: 12, fontWeight: 700, verticalAlign: "middle" }}>⭐ Trusted</span>
+              )}
+              {user?.id === profile.userId && user.verified && !user.trustedReviewer && (
+                <button className="btn btn-primary" onClick={requestTrustedReviewer} disabled={busy} style={{ fontSize: 12, padding: "4px 10px", marginLeft: 10, verticalAlign: "middle", background: "color-mix(in srgb, var(--warn) 18%, transparent)", color: "var(--warn)", border: "1px solid var(--warn)" }}>
+                  {busy ? "..." : "Apply for Trusted Reviewer"}
+                </button>
               )}
             </h1>
             <div className="muted">{profile.email}</div>

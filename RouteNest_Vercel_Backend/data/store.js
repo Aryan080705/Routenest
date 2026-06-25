@@ -87,7 +87,7 @@ const addMockData = () => {
   const likeCounts = [42, 38, 31, 27, 22, 18, 15, 12, 9, 7, 5, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   dummyData.forEach((d, i) => {
-    store.users.push({ id: 1000 + i, name: d.name, email: `dummy${i}@example.com`, verified: true });
+    store.users.push({ id: 1000 + i, name: d.name, email: `dummy${i}@example.com`, verified: true, trustedReviewer: false });
     // Generate fake user IDs for likes
     const fakeLikes = Array.from({ length: likeCounts[i] || 0 }, (_, j) => 2000 + i * 50 + j);
     store.posts.push({
